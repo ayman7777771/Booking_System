@@ -1,0 +1,48 @@
+.auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(45deg, #eef2f3, #8e9eab44); /* خلفية هادئة */
+}
+
+.auth-card {
+    background: var(--glass-bg);
+    border-radius: var(--border-radius);
+    padding: 40px;
+    width: 100%;
+    max-width: 550px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.role-selection {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.role-box {
+    flex: 1;
+    border: 2px solid #0404dd2b;
+    border-radius: 99px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.role-box.active {
+    border-color: var(--brand-teal);
+    background: rgba(32, 201, 150, 0.128);
+}
+
+.role-box i {
+    font-size: 1.5rem;
+    color: var(--brand-blue);
+    display: block;
+    margin-bottom: 4px;
+}
+*{
+    font-weight: bold;
+}

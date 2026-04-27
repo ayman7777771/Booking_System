@@ -1,0 +1,49 @@
+:root {
+    /* ألوان الهوية البصرية */
+    --brand-blue: #0056b3;
+    --brand-teal: #20c997;
+    --brand-gradient: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-teal) 100%);
+    
+    /* متغيرات عامة */
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --border-radius: 15px;
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* الأزرار الموحدة */
+.btn-primary-custom {
+    background: var(--brand-gradient);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 25px;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-primary-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(32, 201, 151, 0.3);
+    color: white;
+}
+
+/* تنسيق المدخلات الموحد */
+.custom-input {
+    border: 2px solid #eee;
+    border-radius: 10px;
+    padding: 12px;
+    transition: var(--transition);
+}
+
+.custom-input:focus {
+    border-color: var(--brand-teal);
+    box-shadow: none;
+    outline: none;
+}
