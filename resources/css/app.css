@@ -1,23 +1,101 @@
 :root {
     /* ألوان الهوية البصرية */
-    --brand-blue: #0056b3;
-    --brand-teal: #20c997;
-    --brand-gradient: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-teal) 100%);
-    
-    /* متغيرات عامة */
+    --brand-blue: #1904b6;
+    --brand-teal: #3ed1e7;
+    --brand-gradient: linear-gradient(
+        135deg,
+        var(--brand-blue) 0%,
+        var(--brand-teal) 100%
+    );
+
+    --bg-page: #f8f9fa;
+    --bg-card: #ffffff;
+    --text-main: #333;
+    --input-border: #eee;
+
     --glass-bg: rgba(255, 255, 255, 0.95);
-    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --card-shadow: 0 10px 70px rgba(7, 54, 224, 0.299);
     --border-radius: 15px;
     --transition: all 0.3s ease;
 }
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+select:-webkit-autofill,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px var(--bg-card) inset !important;
+    box-shadow: 0 0 0px 1000px var(--bg-card) inset !important;
 
-body {
-    font-family: 'Inter', 'Segoe UI', sans-serif;
-    background-color: #f8f9fa;
-    color: #333;
+    -webkit-text-fill-color: var(--text-main) !important;
+    
+    border: none !important;
+    border-bottom: 1.5px solid #ced4da !important; /* حافظ على خطك السفلي */
 }
 
-/* الأزرار الموحدة */
+input:filter(autofill) {
+    background-color: var(--bg-card) !important;
+}
+
+::selection {
+    background-color: var(--brand-blue);
+    color: white;
+}
+
+input, textarea {
+    caret-color: var(--brand-blue);
+}
+
+input:-webkit-autofill {
+    -webkit-text-fill-color: var(--text-main) !important;
+    font-family: inherit; /* باش ما يغيرش المتصفح نوع الخط */
+}
+
+
+[data-theme="dark"] {
+    --bg-page: #121212;
+    --bg-card: #1e1e1e; 
+    --text-main: #f5f5f5;
+    --input-border: #333;
+}
+
+body {
+    font-family: "Inter", "Segoe UI", sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    transition: var(--transition);
+}
+
+
+.input-box {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-box label {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent;
+    color: #666;
+    padding: 0 5px;
+    font-size: 14px;
+    pointer-events: none;
+    transition: var(--transition);
+    z-index: 10;
+}
+
+.input-box input:focus ~ label,
+.input-box input:not(:placeholder-shown) ~ label,
+.input-box select:focus ~ label,
+.input-box select:valid ~ label {
+    top: 0;
+    transform: translateY(-50%) scale(0.9);
+    background-color: var(--bg-card);
+    color: var(--brand-blue);
+    font-weight: 600;
+}
+
 .btn-primary-custom {
     background: var(--brand-gradient);
     color: white;
@@ -34,11 +112,13 @@ body {
     color: white;
 }
 
-/* تنسيق المدخلات الموحد */
 .custom-input {
-    border: 2px solid #eee;
+    background-color: transparent;
+    border: 2px solid var(--input-border);
     border-radius: 10px;
     padding: 12px;
+    width: 100%;
+    color: var(--text-main);
     transition: var(--transition);
 }
 
