@@ -57,7 +57,12 @@ export default function Register() {
             e.photo =
                 "La photo de profil est obligatoire pour les prestataires";
         }
-
+        if (step === 3 && data.photo_profile) {
+            const MAX_SIZE = 2 * 1024 * 1024;
+            if (data.photo_profile.size > MAX_SIZE) {
+                e.photo = "L'image est trop volumineuse (max 2 Mo)";
+            }
+        }
         setError(e);
         return Object.keys(e).length === 0;
     };
@@ -87,21 +92,16 @@ export default function Register() {
     // الدالة لي كاتعالج الصورة
     const handlePhotoChange = (e) => {
         const file = e.target.files[0];
-        const MAX_SIZE = 2 * 1024 * 1024;
         if (!file) return;
-        if (file.size > MAX_SIZE) {
-            setError(
-                "photo_profile",
-                "L'image est trop volumineuse (max 2 Mo)",
-            );
-            return;
-        }
-
         if (photoUrl) {
             URL.revokeObjectURL(photoUrl);
         }
 
-        clearErrors("photo_profile");
+        setError((prev) => {
+            const updated = { ...prev };
+            delete updated.photo;
+            return updated;
+        });
         setData("photo_profile", file);
         setPhotoUrl(URL.createObjectURL(file));
     };
@@ -434,13 +434,14 @@ export default function Register() {
                             </div>
 
                             <p
-                                className={`text-muted small mt-3 ${error.photo ? "is-invalid-photo-prov" : ""}`}
+                                className={`small mt-3 ${error.photo ? "is-invalid-photo-prov" : "text-muted"}`}
                             >
-                                {data.role === "provider"
-                                    ? "Photo de profil obligatoire"
-                                    : "Ajouter une photo de profil (Optionnel)"}
+                                {error.photo
+                                    ? error.photo // ← يعرض رسالة الخطأ المحددة
+                                    : data.role === "provider"
+                                      ? "Photo de profil obligatoire"
+                                      : "Ajouter une photo de profil (Optionnel)"}
                             </p>
-
                             <div className="d-flex gap-2 mt-5">
                                 <button
                                     type="button"
