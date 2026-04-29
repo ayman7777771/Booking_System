@@ -233,9 +233,11 @@ input:focus {
 
 .custom-input::-ms-reveal {
     border-radius: 50%;
-    padding: 2px;
+    padding:2px;
     margin-right: 17px;
-    filter: invert(75%) sepia(50%) saturate(1000%) hue-rotate(150deg);
+    margin-bottom: -4px;
+    /* filter: invert(75%) sepia(50%) saturate(1000%) hue-rotate(150deg); */
+    filter: invert(10%) sepia(85%) saturate(7500%) hue-rotate(240deg) brightness(85%) contrast(110%);
 }
 .custom-input::-webkit-contacts-auto-fill-button {
     margin-right: 17px;
