@@ -50,9 +50,11 @@
 
 .field-group {
     position: relative;
-    margin-bottom: 37px;
     width: 100%;
-}
+    display: flex;
+    margin-bottom: 11px;
+    flex-direction: column;
+    }
 
 .input-box {
     position: relative;
@@ -216,10 +218,14 @@ input:focus {
     border-bottom-color: #11a503 !important;
 }
 
-.is-invalid-photo-prov {
-    color: #dc3545 !important;
+.is-invalid-prov {
+    color: #dc3545 !important; 
+    position: absolute;
+    top: 53px;
+    left: 8px;
     font-weight: bold;
-    animation: shakeEffect 0.5s ease-in-out;
+    font-size: 11px;
+    display: block;
 }
 
 .input-status-icon {
@@ -241,23 +247,4 @@ input:focus {
 }
 .custom-input::-webkit-contacts-auto-fill-button {
     margin-right: 17px;
-}
-@keyframes shakeEffect {
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-    10%,
-    30%,
-    50%,
-    70%,
-    90% {
-        transform: translateX(-5px);
-    }
-    20%,
-    40%,
-    60%,
-    80% {
-        transform: translateX(5px);
-    }
 }

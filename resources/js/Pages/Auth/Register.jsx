@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
 import "animate.css";
 import "@/../../resources/css/app.css";
 import "@/../../resources/css/login.css";
-
+// ********************************************//
+import Step1 from "./Steps/Step1";
+import Step2 from "./Steps/Step2";
+import Step3 from "./Steps/Step3";
+import Step4 from "./Steps/step4_prov";
+// ********************************************//
 export default function Register() {
     const [step, setStep] = useState(1);
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -14,10 +19,13 @@ export default function Register() {
         ville: "",
         photo_profile: "",
         role: "client",
+         category_id: "",
+         description: "",
+            main_image: null
     });
     const [error, setError] = useState({});
     const [photoUrl, setPhotoUrl] = useState(null);
-
+    const [mainPhotoUrl, setMainPhotoUrl] = useState(null);
     const isNameValid = data.name.trim().length >= 3;
     const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email);
     const isVilleValid = data.ville !== "";
@@ -63,6 +71,12 @@ export default function Register() {
                 e.photo = "L'image est trop volumineuse (max 2 Mo)";
             }
         }
+        if (step === 4 && data.role === "provider") {
+            if (!data.category_id)
+                e.category_id = "Veuillez choisir une catégorie";
+            if (!data.description.trim())
+                e.description = "La description est obligatoire";
+        }
         setError(e);
         return Object.keys(e).length === 0;
     };
@@ -73,10 +87,16 @@ export default function Register() {
         setStep((prev) => prev + 1);
     };
     //    function كاتفرق بين الاخطاط لي كيتحددو غير فالواجهة والاخطاء لي كيتحددو فsatabase
+    const allErrors = { ...errors, ...error };
     const getError = (field) => {
-        return error[field] || errors[field];
-    };
-    // function خاصة بتحديث data+ تعديل الاخطاء الخاصة ب رياكت
+        const msg = allErrors[field];
+        if (!msg) return null;
+
+        return (
+<small className="is-invalid-prov animate__animated animate__shakeX animate__faster">                {msg}
+            </small>
+        );
+    }; // function خاصة بتحديث data+ تعديل الاخطاء الخاصة ب رياكت
 
     const hundleChange = (inputName, value) => {
         setData(inputName, value);
@@ -104,6 +124,23 @@ export default function Register() {
         });
         setData("photo_profile", file);
         setPhotoUrl(URL.createObjectURL(file));
+    };
+
+    const removePhoto = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setData("photo", null);
+        URL.revokeObjectURL(photoUrl);
+        setPhotoUrl(null);
+    };
+
+    const handleMainPhotoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (mainPhotoUrl) URL.revokeObjectURL(mainPhotoUrl);
+            setData("main_image", file);
+            setMainPhotoUrl(URL.createObjectURL(file));
+        }
     };
     ///////////////////////////////////////////////////
     //  هادي باينة ديالاش
@@ -135,363 +172,53 @@ export default function Register() {
 
                 <form onSubmit={submit} noValidate>
                     {step === 1 && (
-                        <div className="animate__animated animate__fadeIn">
-                            {/* الاسم */}
-                            <div className="field-group">
-                                <div className="input-box">
-                                    <input
-                                        type="text"
-                                        className={` custom-input ${error.name ? "is-invalid" : data.name ? (isNameValid ? "is-valid" : "is-warning") : ""}`}
-                                        value={data.name}
-                                        onChange={(e) =>
-                                            hundleChange("name", e.target.value)
-                                        }
-                                        required
-                                        placeholder=" "
-                                    />
-                                    <label>
-                                        Nom complet{" "}
-                                        <span style={{ color: "red" }}>*</span>
-                                    </label>
-                                    {data.name && (
-                                        <span className="input-status-icon">
-                                            {error.name ? (
-                                                <i className="bi bi-x-lg text-danger"></i>
-                                            ) : isNameValid ? (
-                                                <i className="bi bi-check-lg text-success"></i>
-                                            ) : (
-                                                <i className="bi bi-exclamation-triangle text-warning"></i>
-                                            )}
-                                        </span>
-                                    )}
-                                </div>
-                                {getError("name") && (
-                                    <small className="error-m">
-                                        {getError("name")}
-                                    </small>
-                                )}
-                            </div>
-
-                            {/* الإيميل */}
-                            <div className="field-group">
-                                <div className="input-box">
-                                    <input
-                                        type="email"
-                                        className={` custom-input ${error.email ? "is-invalid" : data.email ? (isEmailValid ? "is-valid" : "is-warning") : ""}`}
-                                        value={data.email}
-                                        onChange={(e) =>
-                                            hundleChange(
-                                                "email",
-                                                e.target.value,
-                                            )
-                                        }
-                                        required
-                                        placeholder=" "
-                                    />
-                                    <label>
-                                        Adresse Email{" "}
-                                        <span style={{ color: "red" }}>*</span>
-                                    </label>
-                                    {data.email && (
-                                        <span className="input-status-icon">
-                                            {error.email ? (
-                                                <i className="bi bi-x-lg text-danger"></i>
-                                            ) : isEmailValid ? (
-                                                <i className="bi bi-check-lg text-success"></i>
-                                            ) : (
-                                                <i className="bi bi-exclamation-triangle text-warning"></i>
-                                            )}
-                                        </span>
-                                    )}
-                                </div>
-                                {getError("email") && (
-                                    <small className="error-m ">
-                                        {getError("email")}
-                                    </small>
-                                )}
-                            </div>
-
-                            {/* المدينة */}
-                            <div className="field-group">
-                                <div className="input-box">
-                                    <select
-                                        className={`"" custom-input ${
-                                            error.ville
-                                                ? "is-invalid"
-                                                : data.ville
-                                                  ? "is-valid"
-                                                  : ""
-                                        }`}
-                                        value={data.ville}
-                                        onChange={(e) =>
-                                            hundleChange(
-                                                "ville",
-                                                e.target.value,
-                                            )
-                                        }
-                                        required
-                                    >
-                                        <option value="" hidden></option>
-                                        <option value="Fès">Fès</option>
-                                        <option value="Rabat">Rabat</option>
-                                        <option value="Casablanca">
-                                            Casablanca
-                                        </option>
-                                        <option value="Tanger">Tanger</option>
-                                    </select>
-                                    <label>
-                                        Ville{" "}
-                                        <span style={{ color: "red" }}>*</span>
-                                    </label>
-                                    {data.ville && (
-                                        <span className="input-status-icon">
-                                            {" "}
-                                            {error.ville ? (
-                                                <i className="bi bi-x-lg text-danger"></i>
-                                            ) : (
-                                                <i className="bi bi-check-lg text-success"></i>
-                                            )}
-                                        </span>
-                                    )}
-                                </div>
-                                {getError("ville") && (
-                                    <small className="error-m">
-                                        {getError("ville")}
-                                    </small>
-                                )}
-                            </div>
-
-                            <button
-                                type="button"
-                                className="btn-primary-custom w-100 mt-3"
-                                onClick={nextStep}
-                            >
-                                Suivant{" "}
-                                <i className="bi bi-arrow-right ms-2"></i>
-                            </button>
-                        </div>
+                        <Step1
+                            data={data}
+                            error={allErrors}
+                            getError={getError}
+                            isNameValid={isNameValid}
+                            isEmailValid={isEmailValid}
+                            hundleChange={hundleChange}
+                            nextStep={nextStep}
+                        />
                     )}
-
                     {step === 2 && (
-                        <div className="animate__animated animate__fadeIn">
-                            {/* كلمة المرور */}
-                            <div className="field-group">
-                                <div className="input-box">
-                                    <input
-                                        type="password"
-                                        className={`"" custom-input ${error.password ? "is-invalid" : data.password ? (isPasswordValid ? "is-valid" : "is-warning") : ""}`}
-                                        placeholder=" "
-                                        value={data.password}
-                                        onChange={(e) =>
-                                            hundleChange(
-                                                "password",
-                                                e.target.value,
-                                            )
-                                        }
-                                        required
-                                    />
-                                    <label>
-                                        Mot de passe{" "}
-                                        <span style={{ color: "red" }}>*</span>
-                                    </label>
-                                    {data.password && (
-                                        <span className="input-status-icon">
-                                            {error.password ? (
-                                                <i className="bi bi-x-lg text-danger"></i>
-                                            ) : isPasswordValid ? (
-                                                <i className="bi bi-check-lg text-success"></i>
-                                            ) : (
-                                                <i className="bi bi-exclamation-triangle text-warning"></i>
-                                            )}
-                                        </span>
-                                    )}
-                                </div>
-                                {error.password && (
-                                    <small className="error-m">
-                                        {error.password}
-                                    </small>
-                                )}
-                            </div>
-
-                            {/* تأكيد كلمة المرور */}
-                            <div className="field-group">
-                                <div className="input-box">
-                                    <input
-                                        type="password"
-                                        className={`"" custom-input ${error.password_confirmation ? "is-invalid" : data.password_confirmation ? (isPasswordMatch ? "is-valid" : "is-warning") : ""}`}
-                                        placeholder=" "
-                                        value={data.password_confirmation}
-                                        onChange={(e) =>
-                                            hundleChange(
-                                                "password_confirmation",
-                                                e.target.value,
-                                            )
-                                        }
-                                        required
-                                    />
-                                    <label>
-                                        Confirmation{" "}
-                                        <span style={{ color: "red" }}>*</span>
-                                    </label>
-                                    {data.password_confirmation && (
-                                        <span className="input-status-icon">
-                                            {error.password_confirmation ? (
-                                                <i className="bi bi-x-lg text-danger"></i>
-                                            ) : isPasswordMatch ? (
-                                                <i className="bi bi-check-lg text-success"></i>
-                                            ) : (
-                                                <i className="bi bi-exclamation-triangle text-warning"></i>
-                                            )}
-                                        </span>
-                                    )}
-                                </div>
-                                {error.password_confirmation && (
-                                    <small className="error-m">
-                                        {error.password_confirmation}
-                                    </small>
-                                )}
-                            </div>
-                            {/*    ////////////////////////////////////////////////////////////////////////////////////////////////////////////    */}
-                            <label className="mb-2 fw-bold small text-secondary">
-                                Je m'inscris en tant que :
-                            </label>
-
-                            <div className="role-selection">
-                                <div
-                                    className={`role-box ${data.role === "client" ? "active" : ""}`}
-                                    onClick={() => setData("role", "client")}
-                                >
-                                    <i className="bi bi-person-fill"></i> Client
-                                </div>
-                                {/* //////////////////////////////////// */}
-                                <div
-                                    className={`role-box ${data.role === "provider" ? "active" : ""}`}
-                                    onClick={() => setData("role", "provider")}
-                                >
-                                    <i className="bi bi-briefcase-fill"></i>{" "}
-                                    Prestataire
-                                </div>
-                            </div>
-
-                            {/*  /////////////////////////////////////////////////////////////////////////////////////////////////////////  */}
-                            <div className="d-flex gap-2 mt-5">
-                                <button
-                                    type="button"
-                                    className="btn btn-light w-50 border"
-                                    onClick={() => setStep((prev) => prev - 1)}
-                                >
-                                    Retour
-                                </button>
-                                <button
-                                    type="button"
-                                    className="btn-primary-custom w-50"
-                                    onClick={nextStep}
-                                >
-                                    Suivant
-                                </button>
-                            </div>
-                        </div>
+                        <Step2
+                            data={data}
+                            error={allErrors}
+                            getError={getError}
+                            isPasswordValid={isPasswordValid}
+                            isPasswordMatch={isPasswordMatch}
+                            hundleChange={hundleChange}
+                            setStep={setStep}
+                            nextStep={nextStep}
+                        />
                     )}
-
                     {step === 3 && (
-                        <div className="animate__animated animate__fadeIn text-center">
-                            <h5 className="mb-4">
-                                Photo de profil{" "}
-                                {data.role === "provider" && (
-                                    <span style={{ color: "red" }}> *</span>
-                                )}
-                            </h5>
-
-                            <div className="profile-upload-container">
-                                <div className="profile-avatar-preview">
-                                    {photoUrl ? (
-                                        <img
-                                            src={photoUrl}
-                                            alt="Preview"
-                                            className="avatar-img"
-                                        />
-                                    ) : (
-                                        <i
-                                            className={`bi ${data.role === "provider" ? "bi-briefcase-fill" : "bi-person-fill"} default-avatar-icon`}
-                                        ></i>
-                                    )}
-
-                                    <label
-                                        htmlFor="photo-input"
-                                        className="upload-plus-btn"
-                                    >
-                                        <i className="bi bi-plus-lg"></i>
-                                    </label>
-                                </div>
-
-                                <input
-                                    type="file"
-                                    id="photo-input"
-                                    hidden
-                                    accept="image/*"
-                                    onChange={handlePhotoChange}
-                                />
-                            </div>
-
-                            <p
-                                className={`small mt-3 ${error.photo ? "is-invalid-photo-prov" : "text-muted"}`}
-                            >
-                                {error.photo
-                                    ? error.photo // ← يعرض رسالة الخطأ المحددة
-                                    : data.role === "provider"
-                                      ? "Photo de profil obligatoire"
-                                      : "Ajouter une photo de profil (Optionnel)"}
-                            </p>
-                            <div className="d-flex gap-2 mt-5">
-                                <button
-                                    type="button"
-                                    className="btn btn-light w-50 border"
-                                    onClick={() => setStep((prev) => prev - 1)}
-                                >
-                                    Retour
-                                </button>
-                                <button
-                                    type={
-                                        data.role === "provider"
-                                            ? "button"
-                                            : "submit"
-                                    }
-                                    className="btn-primary-custom w-50"
-                                    disabled={processing}
-                                    onClick={
-                                        data.role === "provider"
-                                            ? nextStep
-                                            : undefined
-                                    }
-                                >
-                                    {data.role === "provider"
-                                        ? "Suivant"
-                                        : "S'inscrire"}
-                                </button>
-                            </div>
-                        </div>
+                        <Step3
+                            data={data}
+                            error={allErrors}
+                            getError={getError}
+                            photoUrl={photoUrl}
+                            handlePhotoChange={handlePhotoChange}
+                            setStep={setStep}
+                            nextStep={nextStep}
+                            removePhoto={removePhoto}
+                            processing={processing}
+                        />
                     )}
 
                     {step === 4 && (
-                        <div>
-                            <h3>step4</h3>
-                            <div className="d-flex gap-2 mt-5">
-                                <button
-                                    type="button"
-                                    className="btn btn-light w-50 border"
-                                    onClick={() => setStep((prev) => prev - 1)}
-                                >
-                                    Retour
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="btn-primary-custom w-50"
-                                    disabled={processing}
-                                >
-                                    S'inscrire
-                                </button>
-                            </div>
-                        </div>
+                        <Step4
+                            data={data}
+                            error={allErrors}
+                            getError={getError}
+                            hundleChange={hundleChange}
+                            mainPhotoUrl={mainPhotoUrl}
+                            handleMainPhotoChange={handleMainPhotoChange}
+                            setStep={setStep}
+                            nextStep={nextStep}
+                        />
                     )}
 
                     <div className="text-center mt-4">
