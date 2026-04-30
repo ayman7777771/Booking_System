@@ -1,7 +1,6 @@
 const Step3 = ({
     data,
     error,
-    getError,
     photoUrl,
     handlePhotoChange,
     setStep,

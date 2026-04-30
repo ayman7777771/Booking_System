@@ -88,7 +88,7 @@ export default function Step1({
                         <option value="Casablanca">Casablanca</option>
                         <option value="Tanger">Tanger</option>
                     </select>
-                    <label>
+                    <label  style={{marginLeft: "-4px"}}>
                         Ville <span style={{ color: "red" }}>*</span>
                     </label>
                     {data.ville && (

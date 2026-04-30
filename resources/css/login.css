@@ -54,7 +54,7 @@
     display: flex;
     margin-bottom: 11px;
     flex-direction: column;
-    }
+}
 
 .input-box {
     position: relative;
@@ -217,15 +217,36 @@ input:focus {
 .custom-input.is-valid {
     border-bottom-color: #11a503 !important;
 }
-
 .is-invalid-prov {
-    color: #dc3545 !important; 
+    color: #dc3545 !important;
     position: absolute;
     top: 53px;
     left: 8px;
     font-weight: bold;
     font-size: 11px;
     display: block;
+    animation: shakeEffect 0.5s ease-in-out;
+}
+@keyframes shakeEffect {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(5px);
+    }
 }
 
 .input-status-icon {
@@ -239,11 +260,12 @@ input:focus {
 
 .custom-input::-ms-reveal {
     border-radius: 50%;
-    padding:2px;
+    padding: 2px;
     margin-right: 17px;
     margin-bottom: -4px;
     /* filter: invert(75%) sepia(50%) saturate(1000%) hue-rotate(150deg); */
-    filter: invert(10%) sepia(85%) saturate(7500%) hue-rotate(240deg) brightness(85%) contrast(110%);
+    filter: invert(10%) sepia(85%) saturate(7500%) hue-rotate(240deg)
+        brightness(85%) contrast(110%);
 }
 .custom-input::-webkit-contacts-auto-fill-button {
     margin-right: 17px;

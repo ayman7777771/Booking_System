@@ -8,6 +8,8 @@ import Step1 from "./Steps/Step1";
 import Step2 from "./Steps/Step2";
 import Step3 from "./Steps/Step3";
 import Step4 from "./Steps/step4_prov";
+import Step5 from "./Steps/Step5_prov";
+import Step6 from "./Steps/Step6_prov";
 // ********************************************//
 export default function Register() {
     const [step, setStep] = useState(1);
@@ -19,9 +21,18 @@ export default function Register() {
         ville: "",
         photo_profile: "",
         role: "client",
-         category_id: "",
-         description: "",
-            main_image: null
+        category_id: "",
+        description: "",
+        main_image: null,
+        working_hours: {
+            lun: [],
+            mar: [],
+            mer: [],
+            jeu: [],
+            ven: [],
+            sam: [],
+            dim: [],
+        },
     });
     const [error, setError] = useState({});
     const [photoUrl, setPhotoUrl] = useState(null);
@@ -72,11 +83,31 @@ export default function Register() {
             }
         }
         if (step === 4 && data.role === "provider") {
-            if (!data.category_id)
-                e.category_id = "Veuillez choisir une catégorie";
-            if (!data.description.trim())
-                e.description = "La description est obligatoire";
+            if (!data.main_image) {
+                e.main_image = "L'image de couverture est obligatoire";
+            }
         }
+        if (step === 5 && data.role === "provider") {
+            if (!data.category_id) {
+                e.category_id = "Veuillez choisir une catégorie";
+            }
+            if (!data.description || data.description.trim().length < 20) {
+                e.description =
+                    "La description doit contenir au moins 20 caractères";
+            }
+        }
+        if (step === 6 && data.role === "provider") {
+            // نتأكد هل هناك أي يوم يحتوي على ساعات مختارة
+            const hasHours = Object.values(data.working_hours).some(
+                (daySlots) => daySlots.length > 0,
+            );
+
+            if (!hasHours) {
+                e.working_hours =
+                    "Veuillez sélectionner au moins une heure de travail pour continuer.";
+            }
+        }
+
         setError(e);
         return Object.keys(e).length === 0;
     };
@@ -93,10 +124,10 @@ export default function Register() {
         if (!msg) return null;
 
         return (
-<small className="is-invalid-prov animate__animated animate__shakeX animate__faster">                {msg}
-            </small>
+            <small className="is-invalid-prov text-muted d-block">{msg}</small>
         );
-    }; // function خاصة بتحديث data+ تعديل الاخطاء الخاصة ب رياكت
+    };
+    // function خاصة بتحديث data+ تعديل الاخطاء الخاصة ب رياكت
 
     const hundleChange = (inputName, value) => {
         setData(inputName, value);
@@ -129,7 +160,7 @@ export default function Register() {
     const removePhoto = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        setData("photo", null);
+        setData("photo_profile", null);
         URL.revokeObjectURL(photoUrl);
         setPhotoUrl(null);
     };
@@ -166,7 +197,7 @@ export default function Register() {
                     </h2>
 
                     <p className="text-muted small">
-                        Étape {step} sur {data.role === "provider" ? 4 : 3}
+                        Étape {step} sur {data.role === "provider" ? 6 : 3}
                     </p>
                 </div>
 
@@ -207,17 +238,31 @@ export default function Register() {
                             processing={processing}
                         />
                     )}
-
                     {step === 4 && (
                         <Step4
-                            data={data}
                             error={allErrors}
-                            getError={getError}
-                            hundleChange={hundleChange}
                             mainPhotoUrl={mainPhotoUrl}
                             handleMainPhotoChange={handleMainPhotoChange}
                             setStep={setStep}
                             nextStep={nextStep}
+                        />
+                    )}
+                    {step === 5 && (
+                        <Step5
+                            data={data}
+                            nextStep={nextStep}
+                            setStep={setStep}
+                            hundleChange={hundleChange}
+                            error={allErrors}
+                            getError={getError}
+                        />
+                    )}
+                    {step === 6 && (
+                        <Step6
+                            data={data}
+                            setData={setData}
+                            setStep={setStep}
+                            processing={processing}
                         />
                     )}
 
