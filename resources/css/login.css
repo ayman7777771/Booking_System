@@ -1,13 +1,17 @@
+/* ============================================
+   🏠 LAYOUT — الهيكل العام للصفحة
+   ============================================ */
 .auth-wrapper {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(45deg, #f7fdfe, #acebf644, #73e5fc4a);
+    background: var(--bg-page);
+    transition: var(--transition);
 }
 
 .auth-card {
-    background: rgb(255, 255, 255);
+    background: var(--bg-card);
     backdrop-filter: blur(10px);
     border-radius: var(--border-radius);
     padding: 44px;
@@ -15,8 +19,16 @@
     max-width: 550px;
     box-shadow: var(--card-shadow);
     border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: var(--transition);
 }
 
+* {
+    font-weight: bold;
+}
+
+/* ============================================
+   👤 ROLE SELECTION — اختيار نوع الحساب
+   ============================================ */
 .role-selection {
     display: flex;
     gap: 15px;
@@ -44,10 +56,10 @@
     display: block;
     margin-bottom: 4px;
 }
-* {
-    font-weight: bold;
-}
 
+/* ============================================
+   📦 FIELD GROUP & INPUT BOX — حاوية الحقول
+   ============================================ */
 .field-group {
     position: relative;
     width: 100%;
@@ -71,41 +83,38 @@
     left: 0;
     right: 0;
     height: 20px;
-
     border: 1.5px solid #ced4da;
     border-top: none !important;
     border-radius: 0 0 22px 22px;
-
     transition: all 0.3s ease;
     pointer-events: none;
     z-index: 1;
 }
-.custom-input {
-    width: 100%;
-    height: 100%;
-    background: transparent !important;
-    border: none !important;
-    border-bottom: 1.5px solid #d5d8db !important;
-    padding: 4px 11px 0 15px;
-    color: var(--text-main);
-    font-size: 15px;
-    position: relative;
-    z-index: 2;
-    outline: none !important;
-}
+
 .input-box input {
     height: 50px;
     padding: 0 11px;
     box-sizing: border-box;
 }
+
+.input-box:focus-within::before {
+    border-color: var(--brand-teal) !important;
+}
+
+/* ============================================
+   🏷️ FLOATING LABEL — الـ label العائم
+   ============================================ */
 .input-box label {
     position: absolute;
-    left: 10px;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
+    background-color: transparent;
     color: #666;
+    padding: 0 5px;
     font-size: 14px;
-    transition: 0.3s ease;
+    pointer-events: none;
+    transition: var(--transition);
     z-index: 10;
 }
 
@@ -118,11 +127,27 @@
     font-weight: bold;
 }
 
-.input-box:focus-within::before {
-    border-color: var(--brand-teal) !important;
+/* ============================================
+   ✏️ CUSTOM INPUT — تنسيق حقل الإدخال
+   ============================================ */
+.custom-input {
+    width: 100%;
+    height: 100%;
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1.5px solid #d5d8db !important;
+    padding: 4px 11px 0 15px;
+    color: var(--text-main);
+    font-size: 15px;
+    position: relative;
+    outline: none !important;
+    border-radius: 10px;
 }
+
 .custom-input:focus {
-    border-bottom-color: var(--brand-teal) !important;
+    border-color: var(--brand-teal) !important;
+    box-shadow: none;
+    outline: none !important;
 }
 
 input:focus {
@@ -131,6 +156,52 @@ input:focus {
     box-shadow: 0 0 0 3px rgba(62, 209, 231, 0.4);
     transition: all 0.2s ease-in-out;
 }
+
+.custom-input::-ms-reveal {
+    border-radius: 50%;
+    padding: 2px;
+    margin-right: 17px;
+    margin-bottom: -4px;
+    filter: invert(10%) sepia(85%) saturate(7500%) hue-rotate(240deg)
+        brightness(85%) contrast(110%);
+}
+
+/* ============================================
+   🚦 INPUT STATES — حالات التحقق (valid/invalid/warning)
+   ============================================ */
+.custom-input.is-invalid {
+    border-bottom-color: #ff4d00 !important;
+}
+.input-box:has(.is-invalid)::before {
+    border-color: #ff4d00 !important;
+}
+
+.custom-input.is-warning {
+    border-bottom-color: #ff9800 !important;
+}
+.input-box:has(.is-warning)::before {
+    border-color: #ff9800 !important;
+}
+
+.custom-input.is-valid {
+    border-bottom-color: #11a503 !important;
+}
+.input-box:has(.is-valid)::before {
+    border-color: #11a503 !important;
+}
+
+.input-status-icon {
+    position: absolute;
+    right: 13px;
+    top: 60%;
+    transform: translateY(-50%);
+    z-index: 10;
+    font-size: 14px;
+}
+
+/* ============================================
+   ❌ ERROR MESSAGES — رسائل الخطأ
+   ============================================ */
 .error-m {
     position: absolute;
     bottom: -20px;
@@ -140,6 +211,40 @@ input:focus {
     white-space: nowrap;
 }
 
+.is-invalid-prov {
+    color: #dc3545 !important;
+    position: absolute;
+    top: 53px;
+    left: 8px;
+    font-weight: bold;
+    font-size: 11px;
+    display: block;
+    animation: shakeEffect 0.5s ease-in-out;
+}
+
+@keyframes shakeEffect {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-5px);
+    }
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(5px);
+    }
+}
+
+/* ============================================
+   🖼️ PROFILE UPLOAD — رفع صورة البروفايل (Step3)
+   ============================================ */
 .profile-upload-container {
     position: relative;
     width: 120px;
@@ -197,76 +302,43 @@ input:focus {
     font-size: 18px;
 }
 
-.input-box:has(.is-invalid)::before {
-    border-color: #ff4d00 !important;
-}
-.custom-input.is-invalid {
-    border-bottom-color: #ff4d00 !important;
-}
-
-.input-box:has(.is-warning)::before {
-    border-color: #ff9800 !important;
-}
-.custom-input.is-warning {
-    border-bottom-color: #ff9800 !important;
+/* ============================================
+   🖼️ COVER UPLOAD — رفع صورة الغلاف (Step4)
+   ============================================ */
+.cover-upload-wrapper {
+    border: 2px dashed #ced4da;
+    transition: var(--transition);
 }
 
-.input-box:has(.is-valid)::before {
-    border-color: #11a503 !important;
-}
-.custom-input.is-valid {
-    border-bottom-color: #11a503 !important;
-}
-.is-invalid-prov {
-    color: #dc3545 !important;
-    position: absolute;
-    top: 53px;
-    left: 8px;
-    font-weight: bold;
-    font-size: 11px;
-    display: block;
-    animation: shakeEffect 0.5s ease-in-out;
-}
-@keyframes shakeEffect {
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-
-    10%,
-    30%,
-    50%,
-    70%,
-    90% {
-        transform: translateX(-5px);
-    }
-
-    20%,
-    40%,
-    60%,
-    80% {
-        transform: translateX(5px);
-    }
+.cover-upload-wrapper:hover {
+    border-color: var(--brand-teal);
+    background-color: rgba(62, 208, 231, 0.123) !important;
 }
 
-.input-status-icon {
-    position: absolute;
-    right: 13px;
-    top: 60%;
-    transform: translateY(-50%);
-    z-index: 10;
-    font-size: 14px;
+/* ============================================
+   📝 TEXTAREA — منطقة النص (Step5)
+   ============================================ */
+.custom-textarea {
+    background-color: transparent;
+    border: 1.5px solid #ced4da;
+    border-radius: 10px;
+    padding: 12px 15px;
+    width: 100%;
+    color: var(--text-main);
+    font-size: 15px;
+    resize: vertical;
+    transition: var(--transition);
+    outline: none;
 }
 
-.custom-input::-ms-reveal {
-    border-radius: 50%;
-    padding: 2px;
-    margin-right: 17px;
-    margin-bottom: -4px;
-    /* filter: invert(75%) sepia(50%) saturate(1000%) hue-rotate(150deg); */
-    filter: invert(10%) sepia(85%) saturate(7500%) hue-rotate(240deg)
-        brightness(85%) contrast(110%);
+.custom-textarea:focus {
+    border-color: var(--brand-teal);
+    box-shadow: 0 0 0 3px rgba(62, 209, 231, 0.15);
 }
-.custom-input::-webkit-contacts-auto-fill-button {
-    margin-right: 17px;
+
+/* ============================================
+   📅 AGENDA TABLE — جدول الأوقات (Step6)
+   ============================================ */
+td.cursor-pointer:hover {
+    background-color: rgba(47, 210, 235, 0.345) !important;
 }

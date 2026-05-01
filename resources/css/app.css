@@ -1,5 +1,7 @@
+/* ============================================
+   🎨 CSS VARIABLES — متغيرات الهوية البصرية
+   ============================================ */
 :root {
-    /* ألوان الهوية البصرية */
     --brand-blue: #1904b6;
     --brand-teal: #3ed1e7;
     --brand-gradient: linear-gradient(
@@ -16,24 +18,83 @@
     --glass-bg: rgba(255, 255, 255, 0.95);
     --card-shadow: 0 10px 70px rgba(7, 54, 224, 0.299);
     --border-radius: 15px;
-    --transition: all 0.3s ease;
-}
-input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-select:-webkit-autofill,
-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0px 1000px var(--bg-card) inset !important;
-    box-shadow: 0 0 0px 1000px var(--bg-card) inset !important;
-
-    -webkit-text-fill-color: var(--text-main) !important;
-    
-    border: none !important;
-    border-bottom: 1.5px solid #ced4da !important; /* حافظ على خطك السفلي */
+    --transition: all 0.2s ease;
 }
 
-input:filter(autofill) {
-    background-color: var(--bg-card) !important;
+
+/* ============================================
+   🌙 DARK MODE — الوضع الداكن
+   ============================================ */
+[data-theme="dark"] {
+    --bg-page: #03060f;        
+    --bg-card: #0d1537;        
+    --text-main: #3ed1e7;     
+    --input-border: #1a2a5e;
+    --text-muted-dark: rgba(62, 209, 231, 0.6);
+    --card-shadow: 0 10px 70px rgba(62, 209, 231, 0.15);
+}
+[data-theme="dark"] h2,
+[data-theme="dark"] h5,[data-theme="dark"] label {
+    color: var(--brand-teal) !important;
+}[data-theme="dark"] .text-muted { color: rgba(62, 209, 231, 0.55) !important; }
+[data-theme="dark"] .auth-card .text-muted.small { color: rgba(62, 209, 231, 0.55) !important; }
+[data-theme="dark"] .input-box label {
+    color: rgba(62, 209, 231, 0.6) !important; 
+}
+
+[data-theme="dark"] .is-invalid-prov {
+    color: #f5273b !important;
+}
+[data-theme="dark"] .role-box {
+    color: rgba(255, 255, 255, 0.85);
+    border-color: rgba(62, 209, 231, 0.3);
+}
+[data-theme="dark"] .role-box.active {
+    border-color: var(--brand-teal);
+    background: rgba(62, 209, 231, 0.15);
+}
+[data-theme="dark"] .profile-avatar-preview {
+    background-color: #1a2a5e;
+    border-color: rgba(62, 209, 231, 0.3);
+}
+[data-theme="dark"] .btn.btn-light {
+    background-color: #1a2a5e !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(62, 209, 231, 0.3) !important;
+}
+[data-theme="dark"] .custom-textarea {
+    border-color: rgba(62, 209, 231, 0.3);
+    color: rgba(255, 255, 255, 0.85);
+}
+[data-theme="dark"] .custom-textarea::placeholder {
+    color: rgba(62, 209, 231, 0.4);
+}
+/* جدول الاوقات */
+[data-theme="dark"] .table {
+    color: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(62, 209, 231, 0.2) !important;
+}
+
+[data-theme="dark"] .table td,
+[data-theme="dark"] .table th {
+    background-color: #0a1753 !important;
+    border-color: rgba(62, 209, 231, 0.15) !important;
+}
+
+[data-theme="dark"] .table .bg-light {
+    background-color: #1a2a5e !important;
+}
+
+
+
+/* ============================================
+   🌍 GLOBAL — الأنماط العامة
+   ============================================ */
+body {
+    font-family: "Inter", "Segoe UI", sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    transition: var(--transition);
 }
 
 ::selection {
@@ -45,46 +106,31 @@ input, textarea {
     caret-color: var(--brand-blue);
 }
 
+
+/* ============================================
+   🔒 AUTOFILL — تنسيق الملء التلقائي للمتصفح
+   ============================================ */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+select:-webkit-autofill,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px var(--bg-card) inset !important;
+    box-shadow: 0 0 0px 1000px var(--bg-card) inset !important;
+    -webkit-text-fill-color: var(--text-main) !important;
+    border: none !important;
+    border-bottom: 1.5px solid var(--brand-teal) !important;
+}
+
 input:-webkit-autofill {
     -webkit-text-fill-color: var(--text-main) !important;
-    font-family: inherit; /* باش ما يغيرش المتصفح نوع الخط */
+    font-family: inherit;
 }
 
 
-[data-theme="dark"] {
-    --bg-page: #121212;
-    --bg-card: #1e1e1e; 
-    --text-main: #f5f5f5;
-    --input-border: #333;
-}
-
-body {
-    font-family: "Inter", "Segoe UI", sans-serif;
-    background-color: var(--bg-page);
-    color: var(--text-main);
-    transition: var(--transition);
-}
-
-
-.input-box {
-    position: relative;
-    margin-bottom: 20px;
-}
-
-.input-box label {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: transparent;
-    color: #666;
-    padding: 0 5px;
-    font-size: 14px;
-    pointer-events: none;
-    transition: var(--transition);
-    z-index: 10;
-}
-
+/* ============================================
+   🏷️ FLOATING LABEL — الـ label العائم (select)
+   ============================================ */
 .input-box input:focus ~ label,
 .input-box input:not(:placeholder-shown) ~ label,
 .input-box select:focus ~ label,
@@ -96,6 +142,10 @@ body {
     font-weight: 600;
 }
 
+
+/* ============================================
+   🔘 BUTTON — زر الإجراء الرئيسي
+   ============================================ */
 .btn-primary-custom {
     background: var(--brand-gradient);
     color: white;
@@ -110,20 +160,4 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(32, 201, 151, 0.3);
     color: white;
-}
-
-.custom-input {
-    background-color: transparent;
-    border: 2px solid var(--input-border);
-    border-radius: 10px;
-    padding: 12px;
-    width: 100%;
-    color: var(--text-main);
-    transition: var(--transition);
-}
-
-.custom-input:focus {
-    border-color: var(--brand-teal);
-    box-shadow: none;
-    outline: none;
 }

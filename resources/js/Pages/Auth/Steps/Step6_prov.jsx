@@ -36,9 +36,9 @@ export default function Step6({ data, setData, setStep, processing }) {
     <table className="table table-sm table-bordered mb-0 text-center">
         <thead className="bg-light sticky-top">
             <tr>
-                <th className="small py-2" style={{ width: '60px' }}>Heure</th>
+                <th className="small py-2" style={{ width: '60px',backgroundColor: '#f0f8ff' }}>Heure</th>
                 {Object.entries(daysMapping).map(([key, label]) => (
-                    <th key={key} className="small py-2">{label}</th>
+                    <th key={key} className="small py-2" style={{ width: '60px',backgroundColor: '#f0f8ff' }}>{label}</th>
                 ))}
             </tr>
         </thead>
