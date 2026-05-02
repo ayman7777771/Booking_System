@@ -1,28 +1,23 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import { Link } from '@inertiajs/react';
+import ApplicationLogo from "@/Components/ApplicationLogo";
+import { Link } from "@inertiajs/react";
+import "@/../../resources/css/Guestlayout.css";
 
+ 
 export default function GuestLayout({ children }) {
     return (
-        <>
-            <div>
-<div className="text-center mb-4" style={{ 
-    display: "flex", 
-    alignItems: "center", 
-    justifyContent: "center",
-    gap: "10px",
-}}>
-    <img 
-        src="/images/Booking_System-removebg-preview.png" 
-        alt="Logo" 
-        style={{ height: "55px", width: "95px", objectFit: "contain" }} 
-        
-    />
-</div>
-            </div>
-
-            <div>
+        <div className="guest-layout">
+ 
+            {/* هيدر علوي أبيض مع الشعار */}
+            <header className="guest-header">
+                <Link href="/">
+                    <ApplicationLogo className="nav-logo" />
+                </Link>
+            </header>
+ 
+            <main className="guest-main">
                 {children}
-            </div>
-        </>
+            </main>
+ 
+        </div>
     );
 }

@@ -141,7 +141,8 @@
     font-size: 15px;
     position: relative;
     outline: none !important;
-    border-radius: 10px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
 }
 
 .custom-input:focus {
@@ -341,4 +342,93 @@ input:focus {
    ============================================ */
 td.cursor-pointer:hover {
     background-color: rgba(47, 210, 235, 0.345) !important;
+}
+.input-box input:focus ~ label,
+.input-box input:not(:placeholder-shown) ~ label,
+.input-box select:focus ~ label,
+.input-box select:valid ~ label {
+    top: 0;
+    transform: translateY(-50%) scale(0.9);
+    background-color: var(--bg-card);
+    color: var(--brand-blue);
+    font-weight: 600;
+}
+
+/* ============================================
+   🌙 DARK MODE — خاص بمكونات Login / Register
+   ============================================ */
+
+/* Auth Card */
+[data-theme="dark"] .auth-card .text-muted.small {
+    color: rgba(62, 209, 231, 0.55) !important;
+}
+
+/* Input Label داخل نموذج */
+[data-theme="dark"] .input-box label {
+    color: rgba(62, 209, 231, 0.6) !important;
+}
+
+/* رسالة الخطأ في حقول التحقق */
+[data-theme="dark"] .is-invalid-prov {
+    color: #f5273b !important;
+}
+
+/* اختيار الدور (Prestataire / Client) — Register */
+[data-theme="dark"] .role-box {
+    color: rgba(255, 255, 255, 0.85);
+    border-color: rgba(62, 209, 231, 0.3);
+}
+
+[data-theme="dark"] .role-box.active {
+    border-color: var(--brand-teal);
+    background: rgba(62, 209, 231, 0.15);
+}
+
+/* معاينة الصورة الشخصية — Register */
+[data-theme="dark"] .profile-avatar-preview {
+    background-color: #1a2a5e;
+    border-color: rgba(62, 209, 231, 0.3);
+}
+
+/* زر btn-light داخل نموذج Register */
+[data-theme="dark"] .btn.btn-light {
+    background-color: #1a2a5e !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(62, 209, 231, 0.3) !important;
+}
+
+/* حقل Textarea (الوصف / النبذة) — Register */
+[data-theme="dark"] .custom-textarea {
+    border-color: rgba(62, 209, 231, 0.3);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme="dark"] .custom-textarea::placeholder {
+    color: rgba(62, 209, 231, 0.4);
+}
+
+/* جدول الأوقات — Register (Prestataire) */
+[data-theme="dark"] .table {
+    color: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(62, 209, 231, 0.2) !important;
+}
+
+[data-theme="dark"] .table td,
+[data-theme="dark"] .table th {
+    background-color: #0a1753 !important;
+    border-color: rgba(62, 209, 231, 0.15) !important;
+}
+
+[data-theme="dark"] .table .bg-light {
+    background-color: #1a2a5e !important;
+}
+
+@media (max-width: 468px) {
+    .auth-card {
+        width: 100%;
+        height: 585px;
+    }
+    .body {
+        background-color: white;
+    }
 }

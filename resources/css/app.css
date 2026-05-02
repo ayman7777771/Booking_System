@@ -21,71 +21,27 @@
     --transition: all 0.2s ease;
 }
 
-
 /* ============================================
-   🌙 DARK MODE — الوضع الداكن
+   🌙 DARK MODE — المتغيرات الأساسية فقط
    ============================================ */
 [data-theme="dark"] {
-    --bg-page: #03060f;        
-    --bg-card: #0d1537;        
-    --text-main: #3ed1e7;     
+    --bg-page: #03060f;
+    --bg-card: #00020a;
+    --text-main: #3ed1e7;
     --input-border: #1a2a5e;
     --text-muted-dark: rgba(62, 209, 231, 0.6);
     --card-shadow: 0 10px 70px rgba(62, 209, 231, 0.15);
 }
+
 [data-theme="dark"] h2,
-[data-theme="dark"] h5,[data-theme="dark"] label {
+[data-theme="dark"] h5,
+[data-theme="dark"] label {
     color: var(--brand-teal) !important;
-}[data-theme="dark"] .text-muted { color: rgba(62, 209, 231, 0.55) !important; }
-[data-theme="dark"] .auth-card .text-muted.small { color: rgba(62, 209, 231, 0.55) !important; }
-[data-theme="dark"] .input-box label {
-    color: rgba(62, 209, 231, 0.6) !important; 
 }
 
-[data-theme="dark"] .is-invalid-prov {
-    color: #f5273b !important;
+[data-theme="dark"] .text-muted {
+    color: rgba(62, 209, 231, 0.55) !important;
 }
-[data-theme="dark"] .role-box {
-    color: rgba(255, 255, 255, 0.85);
-    border-color: rgba(62, 209, 231, 0.3);
-}
-[data-theme="dark"] .role-box.active {
-    border-color: var(--brand-teal);
-    background: rgba(62, 209, 231, 0.15);
-}
-[data-theme="dark"] .profile-avatar-preview {
-    background-color: #1a2a5e;
-    border-color: rgba(62, 209, 231, 0.3);
-}
-[data-theme="dark"] .btn.btn-light {
-    background-color: #1a2a5e !important;
-    color: rgba(255, 255, 255, 0.85) !important;
-    border-color: rgba(62, 209, 231, 0.3) !important;
-}
-[data-theme="dark"] .custom-textarea {
-    border-color: rgba(62, 209, 231, 0.3);
-    color: rgba(255, 255, 255, 0.85);
-}
-[data-theme="dark"] .custom-textarea::placeholder {
-    color: rgba(62, 209, 231, 0.4);
-}
-/* جدول الاوقات */
-[data-theme="dark"] .table {
-    color: rgba(255, 255, 255, 0.85) !important;
-    border-color: rgba(62, 209, 231, 0.2) !important;
-}
-
-[data-theme="dark"] .table td,
-[data-theme="dark"] .table th {
-    background-color: #0a1753 !important;
-    border-color: rgba(62, 209, 231, 0.15) !important;
-}
-
-[data-theme="dark"] .table .bg-light {
-    background-color: #1a2a5e !important;
-}
-
-
 
 /* ============================================
    🌍 GLOBAL — الأنماط العامة
@@ -102,10 +58,10 @@ body {
     color: white;
 }
 
-input, textarea {
+input,
+textarea {
     caret-color: var(--brand-blue);
 }
-
 
 /* ============================================
    🔒 AUTOFILL — تنسيق الملء التلقائي للمتصفح
@@ -127,24 +83,8 @@ input:-webkit-autofill {
     font-family: inherit;
 }
 
-
 /* ============================================
-   🏷️ FLOATING LABEL — الـ label العائم (select)
-   ============================================ */
-.input-box input:focus ~ label,
-.input-box input:not(:placeholder-shown) ~ label,
-.input-box select:focus ~ label,
-.input-box select:valid ~ label {
-    top: 0;
-    transform: translateY(-50%) scale(0.9);
-    background-color: var(--bg-card);
-    color: var(--brand-blue);
-    font-weight: 600;
-}
-
-
-/* ============================================
-   🔘 BUTTON — زر الإجراء الرئيسي
+   🔘 BUTTON — زر الإجراء الرئيسي (مشترك)
    ============================================ */
 .btn-primary-custom {
     background: var(--brand-gradient);
@@ -160,4 +100,36 @@ input:-webkit-autofill {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(32, 201, 151, 0.3);
     color: white;
+}
+
+/* ============================================
+   🦉 APPLICATION LOGO — تنسيق شعار النظام (مشترك)
+   ============================================ */
+.nav-logo {
+    height: 95px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.1));
+    transition: transform 0.3s ease, filter 0.3s ease;
+    margin-left: -30px;
+    cursor: pointer;
+}
+
+.nav-logo:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0px 0px 8px rgba(0, 183, 194, 0.4));
+}
+
+[data-theme="dark"] .nav-logo {
+    filter: drop-shadow(0px 4px 10px rgba(0, 183, 194, 0.2)) brightness(1.1);
+}
+
+
+@media (max-width: 568px) {
+    .nav-logo {
+        height: 4rem;
+    }
+    [data-theme="dark"] {
+    --bg-card: #00020a;
+    }
 }

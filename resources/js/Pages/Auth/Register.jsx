@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
 import "animate.css";
-import "@/../../resources/css/app.css";
-import "@/../../resources/css/login.css";
+import "@/../css/app.css";
+import "@/../css/login.css";
 import ThemeToggle from "@/Components/ThemeToggle";
 
 // ********************************************//
