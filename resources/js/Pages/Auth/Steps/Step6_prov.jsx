@@ -1,86 +1,164 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+    MapContainer,
+    TileLayer,
+    Marker,
+    useMapEvents,
+    useMap,
+} from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
-export default function Step6({ data, setData, setStep, processing }) {
-    const daysMapping = {
-        lun: "Lun", mar: "Mar", mer: "Mer",
-        jeu: "Jeu", ven: "Ven", sam: "Sam", dim: "Dim"
-    };
+/* ── إصلاح أيقونة Leaflet الافتراضية ── */
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl:
+        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
 
-    const timeSlots = [];
-    for (let i = 6; i <= 24; i++) {
-        timeSlots.push(`${i.toString().padStart(2, '0')}:00`);
-    }
+/* ── إحداثيات المدن المغربية ── */
+const CITY_COORDS = {
+    fes: [34.0331, -5.0003],
+    casablanca: [33.5731, -7.5898],
+    rabat: [34.0209, -6.8416],
+    marrakech: [31.6295, -7.9811],
+    tanger: [35.7595, -5.834],
+    agadir: [30.4278, -9.5981],
+    meknes: [33.8935, -5.5473],
+    oujda: [34.6814, -1.9086],
+    kenitra: [34.261, -6.5802],
+    tetouan: [35.5785, -5.3684],
+};
 
-    const toggleSlot = (day, slot) => {
-        const currentDaySlots = data.working_hours[day] || [];
-        let newSlots;
+/* ── يحرك الخريطة عند تغيير المدينة ── */
+function MapCenterUpdater({ ville }) {
+    const map = useMap();
+    useEffect(() => {
+        const coords = CITY_COORDS[ville?.toLowerCase()];
+        if (coords) map.flyTo(coords, 13, { duration: 1.2 });
+    }, [ville, map]);
+    return null;
+}
 
-        if (currentDaySlots.includes(slot)) {
-            newSlots = currentDaySlots.filter(s => s !== slot);
-        } else {
-            newSlots = [...currentDaySlots, slot];
-        }
+/* ── يضع الدبوس عند النقر ── */
+function ClickHandler({ onPlace }) {
+    useMapEvents({
+        click(e) {
+            onPlace([e.latlng.lat, e.latlng.lng]);
+        },
+    });
+    return null;
+}
 
-        setData("working_hours", {
-            ...data.working_hours,
-            [day]: newSlots
+/* ══════════════════════════════════════
+   STEP MAP — اختيار الموقع
+══════════════════════════════════════ */
+export default function Step6({
+    data,
+    setData,
+    setStep,
+    nextStep,
+    error,
+    getError,
+    handleChange,
+}) {
+    const [position, setPosition] = useState(null);
+    const [isDark, setIsDark] = useState(
+        document.documentElement.getAttribute("data-theme") === "dark",
+    );
+    useEffect(() => {
+        const observer = new MutationObserver(() => {
+            setIsDark(
+                document.documentElement.getAttribute("data-theme") === "dark",
+            );
         });
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ["data-theme"],
+        });
+        return () => observer.disconnect();
+    }, []);
+
+    const tileUrl = isDark
+        ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        : "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+
+    const defaultCenter = CITY_COORDS[data.ville?.toLowerCase()] ?? [
+        33.9716, -6.8498,
+    ];
+
+    const handlePlace = (coords) => {
+        setPosition(coords);
+        setData("latitude", coords[0]);
+        setData("longitude", coords[1]);
     };
 
     return (
-        <div className="animate__animated animate__fadeIn">
-            <h5 className="text-center fw-bold mb-1">Votre Agenda</h5>
-            <p className="text-muted text-center small mb-3">Cliquez sur les heures qui seront disponibles.</p>
+        <div>
+            <p className="text-muted small mb-3 text-center">
+                🗺️ Cliquez sur la carte pour indiquer votre emplacement exact
+            </p>
 
-          <div className="table-responsive border rounded bg-white shadow-sm" style={{ maxHeight: '380px' }}>
-    <table className="table table-sm table-bordered mb-0 text-center">
-        <thead className="bg-light sticky-top">
-            <tr>
-                <th className="small py-2" style={{ width: '60px',backgroundColor: '#f0f8ff' }}>Heure</th>
-                {Object.entries(daysMapping).map(([key, label]) => (
-                    <th key={key} className="small py-2" style={{ width: '60px',backgroundColor: '#f0f8ff' }}>{label}</th>
-                ))}
-            </tr>
-        </thead>
-        <tbody>
-            {timeSlots.map((slot) => (
-                <tr key={slot}>
-                    <td className="small align-middle fw-bold bg-light" style={{ fontSize: '11px' }}>
-                        {slot}
-                    </td>
-                    {Object.keys(daysMapping).map((day) => {
-                        const isSelected = data.working_hours[day]?.includes(slot);
-                        return (
-                            <td 
-                                key={`${day}-${slot}`}
-                                onClick={() => toggleSlot(day, slot)}
-                                className="cursor-pointer transition-all"
-                                style={{ 
-                                    height: '35px',
-                                    cursor: 'pointer',
-                                    // نستخدم لون البراند هنا عند الاختيار
-                                    backgroundColor: isSelected ? '#3ed1e7' : 'transparent',
-                                    // لون الحدود عند الاختيار ليعطي مظهراً متناسقاً
-                                    borderColor: isSelected ? '#3ed1e7' : '',
-                                    transition: '0.2s'
-                                }}
-                            >
-                                {isSelected && <i className="bi bi-check-lg text-white"></i>}
-                            </td>
-                        );
-                    })}
-                </tr>
-            ))}
-        </tbody>
-    </table>
-</div>
+            <MapContainer
+                center={defaultCenter}
+                zoom={13}
+                style={{
+                    height: "280px",
+                    width: "100%",
+                    borderRadius: "12px",
+                    border: isDark
+                        ? "1px solid rgba(62,209,231,0.2)"
+                        : "1px solid #e0e0e0",
+                }}
+            >
+                {/* ✅ attribution داخل TileLayer مباشرة — هذا هو الصحيح */}
+                <TileLayer
+                    url={tileUrl}
+                    attribution='&copy; <a href="https://carto.com">CARTO</a> | &copy; <a href="https://www.openstreetmap.org">OSM</a>'
+                />
+                <MapCenterUpdater ville={data.ville} />
+                <ClickHandler onPlace={handlePlace} />
+                {position && <Marker position={position} />}
+            </MapContainer>
 
-            <div className="d-flex gap-2 mt-3">
-                <button type="button" className="btn btn-light w-50 border py-2" onClick={() => setStep(prev => prev - 1)}>
+            <div className="mt-2" style={{ minHeight: "19px" }}>
+                {error.location ? (
+                    <small
+                        className="text-danger animate__animated animate__shakeX animate__faster"
+                        style={{
+                            display: "block",
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            marginLeft: "5px",
+                        }}
+                    >
+                        {error.location}
+                    </small>
+                ) : (
+                    <p className="small text-muted text-center">
+                        {position
+                            ? `📍 ${position[0].toFixed(5)}, ${position[1].toFixed(5)}`
+                            : "Aucun emplacement sélectionné"}
+                    </p>
+                )}
+            </div>
+
+            <div className="d-flex gap-2 mt-4">
+                <button
+                    type="button"
+                    className="btn btn-light w-50 border"
+                    onClick={() => setStep((prev) => prev - 1)}
+                >
                     Retour
                 </button>
-                <button type="submit" className="btn-primary-custom w-50 py-2" disabled={processing}>
-                    {processing ? <span className="spinner-border spinner-border-sm"></span> : "Terminer"}
+                <button
+                    type="button"
+                    className="btn-primary-custom w-50"
+                    onClick={nextStep}
+                >
+                    Suivant
                 </button>
             </div>
         </div>

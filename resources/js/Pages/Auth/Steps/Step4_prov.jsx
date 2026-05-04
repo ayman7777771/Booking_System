@@ -1,25 +1,22 @@
 const Step4 = ({
     error,
     mainPhotoUrl,
-    handleMainPhotoChange,
+    handleFile,
     setStep,
     nextStep,
 }) => {
     return (
         <div className="animate__animated animate__fadeIn">
-            {/* صورة الغلاف (Main Image) */}
+            {/* Main Image */}
                 <h5 className="text-center mb-4">Image Principale</h5>
-            <div className="mb-3 text-start">
-                <div
+            <div className="mb-3">
+                <label htmlFor="main-image"
                     className="cover-upload-wrapper border rounded-3 d-flex align-items-center justify-content-center bg-light position-relative"
                     style={{
                         height: "180px",
                         overflow: "hidden",
                         cursor: "pointer",
                     }}
-                    onClick={() =>
-                        document.getElementById("main-image-input").click()
-                    }
                 >
                     {mainPhotoUrl ? (
                         <img
@@ -35,13 +32,13 @@ const Step4 = ({
                             </p>
                         </div>
                     )}
-                </div>
+                </label>
                 <input
                     type="file"
-                    id="main-image-input"
+                    id="main-image"
                     hidden
                     accept="image/*"
-                    onChange={handleMainPhotoChange}
+                    onChange={(e) => handleFile("main_image", e.target.files[0])}
                     required
                 />
                 <div className="mt-2" style={{ minHeight: "19px" }}>

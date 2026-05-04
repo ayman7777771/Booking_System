@@ -53,6 +53,21 @@
     display: flex;
     align-items: center;
 }
+.logo-text {
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: move 3s ease-in-out infinite alternate;
+}
+@keyframes move {
+    0% {
+        background-position: 0%;
+    }
+    100% {
+        background-position: 100%;
+    }
+}
 
 .nav-actions {
     display: flex;

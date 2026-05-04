@@ -4,7 +4,7 @@ export default function Step1({
     getError,
     isNameValid,
     isEmailValid,
-    hundleChange,
+    handleChange,
     nextStep,
 }) {
     return (
@@ -16,7 +16,7 @@ export default function Step1({
                         type="text"
                         className={` custom-input ${error.name ? "is-invalid" : data.name ? (isNameValid ? "is-valid" : "is-warning") : ""}`}
                         value={data.name}
-                        onChange={(e) => hundleChange("name", e.target.value)}
+                        onChange={(e) => handleChange("name", e.target.value)}
                         required
                         placeholder=" "
                     />
@@ -45,7 +45,7 @@ export default function Step1({
                         type="email"
                         className={` custom-input ${error.email ? "is-invalid" : data.email ? (isEmailValid ? "is-valid" : "is-warning") : ""}`}
                         value={data.email}
-                        onChange={(e) => hundleChange("email", e.target.value)}
+                        onChange={(e) => handleChange("email", e.target.value)}
                         required
                         placeholder=" "
                     />
@@ -79,7 +79,7 @@ export default function Step1({
                                   : ""
                         }`}
                         value={data.ville}
-                        onChange={(e) => hundleChange("ville", e.target.value)}
+                        onChange={(e) => handleChange("ville", e.target.value)}
                         required
                     >
                         <option value="" hidden></option>

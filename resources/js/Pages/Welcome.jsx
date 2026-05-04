@@ -45,7 +45,7 @@ export default function Welcome({ auth, flash, query }) {
                 {/* ── NAVBAR ── */}
                 <header className="nav-bar">
                     <div className="logo-section">
-                        <ApplicationLogo className="nav-logo" />
+                        <ApplicationLogo className="nav-logo" /> <h3 className="logo-text">Booking System</h3>
                     </div>
 
                     <nav className="nav-actions">

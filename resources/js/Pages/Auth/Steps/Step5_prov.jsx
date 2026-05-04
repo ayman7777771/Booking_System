@@ -2,7 +2,7 @@ export default function Step5({
     data,
     nextStep,
     setStep,
-    hundleChange,
+    handleChange,
     error,
     getError,
 }) {
@@ -28,7 +28,7 @@ export default function Step5({
                         }`}
                         value={data.category_id}
                         onChange={(e) =>
-                            hundleChange("category_id", e.target.value)
+                            handleChange("category_id", e.target.value)
                         }
                         required
                     >
@@ -67,7 +67,7 @@ export default function Step5({
                     placeholder="Décrivez vos services, votre expérience (min 20 caractères)..."
                     value={data.description}
                     onChange={(e) =>
-                        hundleChange("description", e.target.value)
+                        handleChange("description", e.target.value)
                     }
                 ></textarea>
 
@@ -88,7 +88,6 @@ export default function Step5({
                 </div>
             </div>
 
-            {/* أزرار التنقل */}
             <div className="d-flex gap-2 mt-4">
                 <button
                     type="button"

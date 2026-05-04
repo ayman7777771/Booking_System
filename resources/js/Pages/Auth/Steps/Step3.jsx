@@ -2,10 +2,9 @@ const Step3 = ({
     data,
     error,
     photoUrl,
-    handlePhotoChange,
+    handleFile,
     setStep,
     nextStep,
-    removePhoto,
     processing,
 }) => {
     return (
@@ -19,7 +18,7 @@ const Step3 = ({
             <div className="profile-upload-container field-group">
                 <label
                     htmlFor="photo-input"
-                    className="profile-avatar-preview"
+                    className="profile-avatar"
                     style={{ cursor: "pointer" }}
                 >
                     {photoUrl ? (
@@ -30,20 +29,20 @@ const Step3 = ({
                         />
                     ) : (
                         <i
-                            className={`bi ${data.role === "provider" ? "bi-briefcase-fill" : "bi-person-fill"} default-avatar-icon`}
+                            className={`${data.role === "provider" ? "bi-briefcase-fill" : "bi-person-fill"} default-avatar`}
                         ></i>
                     )}
 
                     {photoUrl ? (
                         <div
                             className="upload-plus-btn bg-danger border-danger"
-                            onClick={removePhoto}
+                            onClick={() => handleFile("photo_profile", null)}
                         >
                             <i className="bi bi-trash3-fill text-white"></i>
                         </div>
                     ) : (
                         <div className="upload-plus-btn">
-                            <i className="bi bi-plus-lg"></i>
+                            <i className="bi-plus-lg"></i>
                         </div>
                     )}
                 </label>
@@ -53,7 +52,7 @@ const Step3 = ({
                     id="photo-input"
                     hidden
                     accept="image/*"
-                    onChange={handlePhotoChange}
+                    onChange={(e) => handleFile("photo_profile", e.target.files[0])}
                 />
             </div>
 

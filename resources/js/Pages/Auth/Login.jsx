@@ -127,7 +127,7 @@ export default function Login({ status, canResetPassword }) {
                             </div>
                             {errors.password && (
                                 <small
-                                    className="error-m"
+                                    className="error-m "
                                     style={{ margin: "17px" }}
                                 >
                                     {errors.password}

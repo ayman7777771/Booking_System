@@ -4,7 +4,7 @@ export default function Step2({
     getError,
     isPasswordValid,
     isPasswordMatch,
-    hundleChange,
+    handleChange,
     setStep,
     nextStep,
 }) {
@@ -19,7 +19,7 @@ export default function Step2({
                         placeholder=" "
                         value={data.password}
                         onChange={(e) =>
-                            hundleChange("password", e.target.value)
+                            handleChange("password", e.target.value)
                         }
                         required
                     />
@@ -50,7 +50,7 @@ export default function Step2({
                         placeholder=" "
                         value={data.password_confirmation}
                         onChange={(e) =>
-                            hundleChange(
+                            handleChange(
                                 "password_confirmation",
                                 e.target.value,
                             )
@@ -75,14 +75,14 @@ export default function Step2({
                 {getError("password_confirmation")}
             </div>
             {/*    ////////////////////////////////////////////////////////////////////////////////////////////////////////////    */}
-            <label className="mb-2 fw-bold small text-secondary">
+            <label className="mb-2 fw-bold small">
                 Je m'inscris en tant que :
             </label>
 
             <div className="role-selection">
                 <div
                     className={`role-box ${data.role === "client" ? "active" : ""}`}
-                    onClick={() => hundleChange("role", "client")}
+                    onClick={() => handleChange("role", "client")}
                 >
                     <i className="bi bi-person-fill"></i> Client
                 </div>
@@ -90,8 +90,7 @@ export default function Step2({
                 <div
                     className={`role-box ${data.role === "provider" ? "active" : ""}`}
                     onClick={() => {
-                        hundleChange("role", "provider");
-                        console.log(data.role);
+                        handleChange("role", "provider");
                     }}
                 >
                     <i className="bi bi-briefcase-fill"></i> Prestataire
