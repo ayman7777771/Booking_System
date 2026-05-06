@@ -25,7 +25,7 @@ export default function Map({
 
         mapRef.current = new maplibregl.Map({
             container: containerRef.current,
-            style: "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",
+            style: "https://styles.trailsta.sh/osm-liberty.json",
             center: value || [-6.85, 33.97],
             zoom: 11,
         });
@@ -62,7 +62,7 @@ export default function Map({
         mapRef.current.flyTo({ center: value, zoom: 15 });
     }, [value]);
 
-    /* GPS BUTTON */
+    /* GPS */
     const locateMe = () => {
         navigator.geolocation.getCurrentPosition(
             async (pos) => {

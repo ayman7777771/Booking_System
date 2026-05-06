@@ -20,31 +20,29 @@ import validateStep from "./Steps/validateSteps";
 // تُنفذ مرة واحدة عند تحميل الصفحة
 export default function Register() {
     const [step, setStep] = useState(1);
-    const { data, setData, post, processing, errors, reset } = useForm(
-        {
-            name: "",
-            email: "",
-            password: "",
-            password_confirmation: "",
-            ville: "",
-            photo_profile: "",
-            role: "client",
-            category_id: "",
-            description: "",
-            main_image: null,
-            working_hours: {
-                lun: [],
-                mar: [],
-                mer: [],
-                jeu: [],
-                ven: [],
-                sam: [],
-                dim: [],
-            },
-            latitude: null,
-            longitude: null,
+    const { data, setData, post, processing, errors, reset } = useForm({
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+        ville: "",
+        photo_profile: "",
+        role: "client",
+        category_id: "",
+        description: "",
+        main_image: null,
+        working_hours: {
+            lun: [],
+            mar: [],
+            mer: [],
+            jeu: [],
+            ven: [],
+            sam: [],
+            dim: [],
         },
-    );
+        longitude: null,
+        latitude: null,
+    });
     const [error, setError] = useState({});
     const [photoUrl, setPhotoUrl] = useState(null);
     const [mainPhotoUrl, setMainPhotoUrl] = useState(null);
