@@ -1,11 +1,9 @@
 import '../css/app.css';
 import './bootstrap';
+import "maplibre-gl/dist/maplibre-gl.css";
 
-// Bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
-// Icons
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import { createInertiaApp } from '@inertiajs/react';
@@ -24,7 +22,9 @@ createInertiaApp({
         ),
 
     setup({ el, App, props }) {
-        createRoot(el).render(<App {...props} />);
+        createRoot(el).render(
+            <App {...props} />
+        );
     },
 
     progress: {

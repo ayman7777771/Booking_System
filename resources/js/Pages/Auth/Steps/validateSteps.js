@@ -9,7 +9,7 @@ const validateStep = (data, step, setError, validationProps) => {
             e.name = "Le Nom est obligatoire";
         } else if (data.name.length < 3) {
             e.name = "Min 3 caractères";
-        } else if (!/^[a-zA-Z\s\u0600-\u06FF]+$/.test(data.name)) {
+        } else if (!/^[a-zA-Z\s\u0600-\u06FF-]+$/.test(data.name)) {
             e.name =
                 "Le nom ne doit pas contenir de chiffres ou de caractères spéciaux";
         }

@@ -7,7 +7,6 @@ export default function Step7({
     processing,
     error,
 }) {
-    // 1. تعريف الثوابت (خارج الـ Logic لتبقى الواجهة نظيفة)
     const days = [
         { id: "lun", name: "Lun" },
         { id: "mar", name: "Mar" },
@@ -23,20 +22,19 @@ export default function Step7({
         time.push(`${i.toString().padStart(2, "0")}:00`);
     }
 
-    // 2. دالة التحكم في المواعيد (مع الترتيب التلقائي)
-    const toggleSlot = (day, x) => {
+    const toggleSlot = (day, heure) => {
         const currDay = data.working_hours[day] || [];
-        let newSlots;
+        let newHours;
 
-        if (currDay.includes(x)) {
-            newSlots = currDay.filter((s) => s !== x).sort();
+        if (currDay.includes(heure)) {
+            newHours = currDay.filter((s) => s !== heure);
         } else {
-            newSlots = [...currDay, x].sort();
+            newHours = [...currDay, heure].sort();
         }
 
         setData("working_hours", {
             ...data.working_hours,
-            [day]: newSlots,
+            [day]: newHours,
         });
     };
 

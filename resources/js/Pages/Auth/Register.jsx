@@ -21,7 +21,6 @@ import validateStep from "./Steps/validateSteps";
 export default function Register() {
     const [step, setStep] = useState(1);
     const { data, setData, post, processing, errors, reset } = useForm(
-        "RegistrationKey",
         {
             name: "",
             email: "",
@@ -51,7 +50,7 @@ export default function Register() {
     const [mainPhotoUrl, setMainPhotoUrl] = useState(null);
     const isNameValid =
         data.name.trim().length >= 3 &&
-        /^[a-zA-Z\s\u0600-\u06FF]+$/.test(data.name);
+        /^[a-zA-Z\s\u0600-\u06FF-]+$/.test(data.name);
     const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email);
     const isVilleValid = data.ville !== "";
     const isPasswordValid = data.password.length >= 8;
@@ -210,6 +209,7 @@ export default function Register() {
                             nextStep={nextStep}
                             setStep={setStep}
                             error={allErrors}
+                            setError={setError}
                         />
                     )}
                     {step === 7 && (

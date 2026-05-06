@@ -45,7 +45,8 @@ export default function Welcome({ auth, flash, query }) {
                 {/* ── NAVBAR ── */}
                 <header className="nav-bar">
                     <div className="logo-section">
-                        <ApplicationLogo className="nav-logo" /> <h3 className="logo-text">Booking System</h3>
+                        <ApplicationLogo className="nav-logo" />{" "}
+                        <h3 className="logo-text">Booking System</h3>
                     </div>
 
                     <nav className="nav-actions">
@@ -70,7 +71,6 @@ export default function Welcome({ auth, flash, query }) {
 
                 {/* ── HERO ── */}
                 <main className="hero-content">
-                    {/* Titre */}
                     <div className="hero-text-block">
                         <h1 className="title">
                             Simplifiez vos <span>réservations</span>,<br />
@@ -131,50 +131,76 @@ export default function Welcome({ auth, flash, query }) {
                         </h2>
 
                         <div className="cards-grid">
-                            {/* PRESTATAIRES */}
-                            <div className="info-card purple">
-                                <h3>PRESTATAIRES</h3>
-                                <ul>
-                                    <li>
-                                        <CheckIcon type="purple" />
-                                        <span>COUVRE LE MONDE ENTIER</span>
-                                    </li>
-                                    <li>
-                                        <CheckIcon type="purple" />
-                                        <span>RÉSERVATIONS FIABLES</span>
-                                    </li>
-                                    <li>
-                                        <CheckIcon type="purple" />
-                                        <span>LOCALISATION OPTIMISÉE</span>
-                                    </li>
-                                    <li>
-                                        <CheckIcon type="purple" />
-                                        <span>GÉRER VOTRE ÉQUIPE</span>
-                                    </li>
-                                </ul>
-                            </div>
+                            <div className="cards-grid">
+                                {/* PRESTATAIRES */}
+                                <div className="info-card purple">
+                                    <h3>PRESTATAIRES</h3>
+                                    <ul>
+                                        <li>
+                                            <CheckIcon type="purple" />
+                                            <span>
+                                                Développez votre activité et
+                                                élargissez votre clientèle
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <CheckIcon type="purple" />
+                                            <span>
+                                                Recevez vos réservations
+                                                facilement
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <CheckIcon type="purple" />
+                                            <span>
+                                                Organisez vos rendez-vous
+                                                efficacement
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <CheckIcon type="purple" />
+                                            <span>
+                                                Des solutions pratiques pour
+                                                gérer vos services
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
 
-                            {/* CLIENTS */}
-                            <div className="info-card teal">
-                                <h3>CLIENTS</h3>
-                                <ul>
-                                    <li>
-                                        <CheckIcon type="teal" />
-                                        <span>GLOBAL CUSTOMER</span>
-                                    </li>
-                                    <li>
-                                        <CheckIcon type="teal" />
-                                        <span>RÉSERVATIONS FIABLES</span>
-                                    </li>
-                                    <li>
-                                        <CheckIcon type="teal" />
-                                        <span>TAST ACCUSTONSHIP</span>
-                                    </li>
-                                    <li>
-                                        <CheckIcon type="teal" />
-                                        <span>ULTIMATE BOOKINGS</span>
-                                    </li>
-                                </ul>
+                                {/* CLIENTS */}
+                                <div className="info-card teal">
+                                    <h3>CLIENTS</h3>
+                                    <ul>
+                                        <li>
+                                            <CheckIcon type="teal" />
+                                            <span>
+                                                Découvrez des services près de
+                                                chez vous
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <CheckIcon type="teal" />
+                                            <span>
+                                                Réservation rapide et expérience
+                                                fluide
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <CheckIcon type="teal" />
+                                            <span>
+                                                Une expérience fiable et
+                                                sécurisée
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <CheckIcon type="teal" />
+                                            <span>
+                                                Un large choix adapté à vos
+                                                besoins
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
