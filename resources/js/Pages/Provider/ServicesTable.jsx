@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export default function ServicesTable({ services }) {
     const { delete: destroy, put, data, setData, reset } = useForm({
-        nom: "",
+        name: "",
         prix: "",
         duration: "",
     });
@@ -19,7 +19,7 @@ export default function ServicesTable({ services }) {
     const startEdit = (service) => {
         setEditingId(service.id);
         setData({
-            nom: service.nom,
+            name: service.name,
             prix: service.prix,
             duration: service.duration,
         });
@@ -60,13 +60,13 @@ export default function ServicesTable({ services }) {
                             <td>
                                 {editingId === service.id ? (
                                     <input
-                                        value={data.nom}
+                                        value={data.name}
                                         onChange={(e) =>
-                                            setData("nom", e.target.value)
+                                            setData("name", e.target.value)
                                         }
                                     />
                                 ) : (
-                                    service.nom
+                                    service.name
                                 )}
                             </td>
 

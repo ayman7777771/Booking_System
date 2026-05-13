@@ -5,7 +5,7 @@ export default function ServiceTest() {
     const [editingId, setEditingId] = useState(null);
 
     const { data, setData, post, put, processing, errors, reset } = useForm({
-        nom: "",
+        name: "",
         prix: "",
         duration: "",
     });
@@ -31,7 +31,7 @@ export default function ServiceTest() {
     // simulate edit (غادي تستعملها من table من بعد)
     const startEdit = (service) => {
         setData({
-            nom: service.nom,
+            name: service.name,
             prix: service.prix,
             duration: service.duration,
         });
@@ -52,10 +52,10 @@ export default function ServiceTest() {
             >
                 <input
                     placeholder="Nom"
-                    value={data.nom}
-                    onChange={(e) => setData("nom", e.target.value)}
+                    value={data.name}
+                    onChange={(e) => setData("name", e.target.value)}
                 />
-                {errors.nom && <p>{errors.nom}</p>}
+                {errors.name && <p>{errors.name}</p>}
 
                 <input
                     placeholder="Prix"
@@ -83,7 +83,7 @@ export default function ServiceTest() {
                 onClick={() =>
                     startEdit({
                         id: 1,
-                        nom: "Test Service",
+                        name: "Test Service",
                         prix: 100,
                         duration: 30,
                     })

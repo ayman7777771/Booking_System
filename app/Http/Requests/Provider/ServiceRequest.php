@@ -14,7 +14,7 @@ class ServiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'prix' => 'required|numeric|min:0',
             'duration' => 'required|integer|min:1',
         ];
@@ -23,9 +23,9 @@ class ServiceRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'nom.required' => 'Le nom du service est obligatoire.',
-            'nom.string'   => 'Le nom doit être une chaîne de caractères.',
-            'nom.max'      => 'Le nom ne doit pas dépasser 255 caractères.',
+            'name.required' => 'Le nom du service est obligatoire.',
+            'name.string'   => 'Le nom doit être une chaîne de caractères.',
+            'name.max'      => 'Le nom ne doit pas dépasser 255 caractères.',
 
             'prix.required' => 'Le prix est obligatoire.',
             'prix.numeric'  => 'Le prix doit être un nombre valide.',
