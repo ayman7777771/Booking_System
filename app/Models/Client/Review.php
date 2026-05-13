@@ -25,4 +25,7 @@ class Review extends Model
     {
         return $this->belongsTo(\App\Models\Provider\Provider::class);
     }
+    public function service() {
+    return $this->belongsTo(\App\Models\Provider\Service::class);
+}
 }

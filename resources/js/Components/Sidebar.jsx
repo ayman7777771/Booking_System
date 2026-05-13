@@ -1,17 +1,28 @@
 import React from 'react';
-import Sidebar from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
+    if (!isOpen) return null;
+
+    const sidebarStyle = {
+        position: 'fixed', right: 0, top: 0, width: '320px', height: '100%',
+        background: 'var(--glass-bg)', backdropFilter: 'blur(15px)',
+        zIndex: 100, padding: '30px', boxShadow: '-10px 0 30px rgba(0,0,0,0.1)',
+        direction: 'rtl'
+    };
+
     return (
-        <aside className="w-64 bg-white dark:bg-slate-900 h-screen border-r dark:border-slate-800 sticky top-0 hidden md:block">
-            <div className="p-6">
-                <h2 className="text-xl font-bold text-blue-600">Booking System</h2>
+        <div style={sidebarStyle}>
+            <button onClick={onClose} style={{ float: 'left', background: 'none', border: 'none' }}>إغلاق ✕</button>
+            <div style={{ marginTop: '60px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div className="menu-item active" style={{ background: 'var(--brand-gradient)', color: '#white', padding: '15px', borderRadius: '15px' }}>
+                    📅 حجوزاتي
+                </div>
+                <div style={{ padding: '15px' }}>👤 الملف الشخصي</div>
+                <div style={{ padding: '15px' }}>⚙️ الإعدادات</div>
+                <hr style={{ border: '0.5px solid #eee' }} />
+                <Link method="post" href="/logout" style={{ color: 'red', textDecoration: 'none', padding: '15px' }}>🚪 تسجيل الخروج</Link>
             </div>
-            <nav className="mt-6 px-4 space-y-2">
-                <Link href="/" className="block p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 font-medium">Discover</Link>
-                <Link href="#" className="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300">Bookings</Link>
-                <Link href="#" className="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300">Messages</Link>
-            </nav>
-        </aside>
+        </div>
     );
 }

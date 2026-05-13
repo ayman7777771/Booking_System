@@ -1,23 +1,72 @@
-export default function Navbar({ user }) {
+import React from 'react';
+
+export default function Navbar({ user, toggleDarkMode, isDarkMode, toggleSidebar }) {
+    // L-istayl dyal l-navbar (Glassmorphism)
+    const navbarStyle = {
+        background: 'var(--glass-bg)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(0,0,0,0.05)',
+        display: 'flex',
+        justifyContent: 'between',
+        alignItems: 'center',
+        padding: '10px 24px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 40,
+        width: '100%',
+        boxSizing: 'border-box'
+    };
+
     return (
-        <nav className="h-16 bg-white dark:bg-slate-900 border-b dark:border-slate-800 flex items-center justify-between px-8 sticky top-0 z-10">
-            <div className="flex-1 max-w-md">
-                <input type="text" placeholder="Recherche..." className="..." />
-            </div>
-            
-            <div className="flex items-center gap-4">
-                <div className="text-right hidden sm:block">
-                    <p className="text-sm font-bold dark:text-white">{user.name}</p>
-                    <Link 
-                        href={route('logout')} 
-                        method="post" 
-                        as="button" 
-                        className="text-xs text-red-500 hover:underline"
-                    >
-                        Déconnexion
-                    </Link>
+        <nav style={navbarStyle} className="navbar-container">
+            {/* 1. L-Logo (Left) */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '40px', height: '40px', background: 'var(--brand-gradient)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '20px' }}>
+                    B
                 </div>
-                <img src={`https://ui-avatars.com/api/?name=${user.name}`} className="w-10 h-10 rounded-full border" />
+                <span style={{ fontWeight: '800', fontSize: '1.2rem', color: 'var(--brand-blue)', letterSpacing: '-0.5px' }}>
+                    Booking System
+                </span>
+            </div>
+
+            {/* 2. Controls & Profile (Right) */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                {/* Dark Mode Toggle */}
+                <button 
+                    onClick={toggleDarkMode}
+                    style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}
+                >
+                    {isDarkMode ? '☀️' : '🌙'}
+                </button>
+
+                {/* User Avatar - mn l-Utilisateur f l-diagramme [cite: 1] */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <img 
+                        src={user?.photoProfile ? `/storage/${user.photoProfile}` : '/avatar.png'} 
+                        alt="Profile"
+                        style={{ width: '35px', height: '35px', borderRadius: '50%', border: '2px solid var(--brand-teal)' }}
+                    />
+                    <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)' }}>▼</span>
+                </div>
+
+                {/* Menu Burger Icon (kima f s-sora) */}
+                <button 
+                    onClick={toggleSidebar}
+                    style={{ 
+                        background: 'var(--bg-card)', 
+                        border: '1px solid var(--input-border)',
+                        padding: '8px', 
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '4px'
+                    }}
+                >
+                    <span style={{ width: '18px', height: '2px', background: 'var(--brand-blue)', borderRadius: '2px' }}></span>
+                    <span style={{ width: '18px', height: '2px', background: 'var(--brand-blue)', borderRadius: '2px' }}></span>
+                    <span style={{ width: '18px', height: '2px', background: 'var(--brand-blue)', borderRadius: '2px' }}></span>
+                </button>
             </div>
         </nav>
     );

@@ -1,25 +1,66 @@
 import React from 'react';
 
 export default function ServiceCard({ service }) {
+    // 1. Path dyal l-tsawer
+    const mainImg = service.provider?.Mainphoto ? `/storage/${service.provider.Mainphoto}` : '/default.jpg';
+    const profileImg = service.provider?.utilisateur?.photoProfile ? `/storage/${service.provider.utilisateur.photoProfile}` : '/avatar.png';
+
+    // 2. Logic dyal les étoiles (Moyen)
+    // service.moyen_note k-t-wsal mn l-controller (mital: 4.5)
+    const rating = service.moyen_note ? Math.round(service.moyen_note) : 0;
+
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent dark:border-cyan-500/30 group">
-            <div className="relative h-40 overflow-hidden">
-                <img src={service.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                {/* Dik l-vague l-bidda li t-teḥt */}
-                <div className="absolute bottom-0 w-full">
-                    <svg viewBox="0 0 1440 320" className="fill-white dark:fill-slate-800 w-full h-12">
-                        <path d="M0,160L80,176C160,192,320,224,480,213.3C640,203,800,149,960,138.7C1120,128,1280,160,1360,176L1440,192L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
-                    </svg>
-                </div>
+        <div className="service-card" style={{ 
+            background: 'var(--bg-card)', 
+            borderRadius: '20px', 
+            overflow: 'hidden', 
+            boxShadow: '0 10px 15px rgba(0,0,0,0.05)',
+            transition: 'transform 0.3s ease'
+        }}>
+            {/* L-image l-kbira */}
+            <div style={{ height: '180px', overflow: 'hidden' }}>
+                <img src={mainImg} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Service" />
             </div>
             
-            <div className="p-5 pt-0 text-center relative">
-                <img src={service.avatar} className="w-16 h-16 rounded-full border-4 border-white dark:border-slate-800 mx-auto -mt-10 relative z-10" />
-                <h3 className="mt-2 font-bold text-gray-800 dark:text-white">{service.name}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{service.category}</p>
-                <div className="flex justify-center my-2 text-yellow-400 text-xs italic font-semibold">⭐⭐⭐⭐⭐</div>
-                <p className="text-xs text-gray-400 mb-4">📍 {service.location}</p>
-                <button className="w-full bg-blue-700 hover:bg-blue-800 text-white py-2.5 rounded-xl text-sm font-semibold transition-colors">
+            {/* L-avatar w l-ma'loumat */}
+            <div style={{ padding: '0 20px 20px', textAlign: 'center', marginTop: '-40px' }}>
+                <img src={profileImg} style={{ 
+                    width: '80px', height: '80px', borderRadius: '50%', 
+                    border: '5px solid var(--bg-card)', backgroundColor: 'white',
+                    objectFit: 'cover'
+                }} alt="Provider" />
+                
+                <h3 style={{ margin: '10px 0 5px', color: 'var(--text-main)' }}>{service.nom}</h3>
+                
+                {/* --- Hna l-parti dyal les étoiles (Rating) --- */}
+                <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px' }}>
+                    {[1, 2, 3, 4, 5].map((num) => (
+                        <span key={num} style={{ 
+                            color: num <= rating ? '#FFD700' : '#E0E0E0', // Joloud l-star (Gold) ola Grey
+                            fontSize: '18px'
+                        }}>
+                            ★
+                        </span>
+                    ))}
+                    <span style={{ fontSize: '12px', color: '#888', marginLeft: '5px' }}>
+                        ({service.moyen_note ? Number(service.moyen_note).toFixed(1) : '0.0'})
+                    </span>
+                </div>
+                {/* ------------------------------------------ */}
+
+                <p style={{ color: 'var(--brand-teal)', fontWeight: 'bold', fontSize: '1.1rem' }}>{service.prix} DH</p>
+                <p style={{ fontSize: '12px', color: '#888', marginBottom: '15px' }}>📍 {service.provider?.utilisateur?.ville}</p>
+                
+                <button className="btn-brand" style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '12px',
+                    border: 'none',
+                    background: 'var(--brand-gradient)',
+                    color: 'white',
+                    fontWeight: 'bold',
+                    cursor: 'pointer'
+                }}>
                     Voir Profil Personnel
                 </button>
             </div>
