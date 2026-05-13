@@ -7,7 +7,6 @@ export default function GuestLayout({ children }) {
     return (
         <div className="guest-layout">
  
-            {/* هيدر علوي أبيض مع الشعار */}
             <header className="guest-header">
                 <Link href="/">
                     <ApplicationLogo className="nav-logo" />

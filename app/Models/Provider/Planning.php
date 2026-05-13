@@ -14,6 +14,9 @@ class Planning extends Model
         'day',
         'time',
     ];
+    protected $casts = [
+    'time' => 'array',
+  ];
     public function provider()
     {
         return $this->belongsTo(Provider::class);

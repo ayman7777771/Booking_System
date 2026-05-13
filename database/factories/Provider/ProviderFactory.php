@@ -16,7 +16,7 @@ class ProviderFactory extends Factory
       return [
             'categorie_id' => \App\Models\Categorie::inRandomOrder()->first()?->id,
             'description' => fake()->paragraph(),
-            'Mainphoto' => fake()->imageUrl(),
+            'main_photo' => fake()->imageUrl(),
             'longitude' => fake()->longitude(),
             'latitude' => fake()->latitude(),
             'service' => fake()->jobTitle(),

@@ -24,7 +24,6 @@ export default function Step6({
                 onChange={(coords) => {
                     setData("latitude", coords[1]);
                     setData("longitude", coords[0]);
-
                     setError((prev) => ({
                         ...prev,
                         location: null,
@@ -40,7 +39,7 @@ export default function Step6({
             )}
             </div>
 
-            <div className="d-flex gap-2 mt-3">
+            <div className="d-flex gap-2" style={{marginTop:"-18px"}}>
                 <button
                     type="button"
                     className="btn btn-light w-50"

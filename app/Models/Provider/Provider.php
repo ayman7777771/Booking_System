@@ -23,7 +23,7 @@ class Provider extends Model
     'user_id',
     'categorie_id',
     'description',
-    'mainphoto',
+    'main_photo',
     'longitude',
     'latitude',
     'service',

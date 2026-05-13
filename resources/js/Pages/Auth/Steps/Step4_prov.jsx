@@ -38,11 +38,11 @@ const Step4 = ({
                     id="main-image"
                     hidden
                     accept="image/*"
-                    onChange={(e) => handleFile("main_image", e.target.files[0])}
+                    onChange={(e) => handleFile("main_photo", e.target.files[0])}
                     required
                 />
                 <div className="mt-2" style={{ minHeight: "19px" }}>
-                    {error.main_image && (
+                    {error.main_photo && (
                         <small
                             className="text-danger animate__animated animate__shakeX animate__faster"
                             style={{
@@ -53,7 +53,7 @@ const Step4 = ({
                                 marginTop: "5px",
                             }}
                         >
-                            {error.main_image}
+                            {error.main_photo}
                         </small>
                     )}
                 </div>{" "}

@@ -1,21 +1,24 @@
 //  finction خاصة بمراجعة ما ادخله المستخدم
 
-const validateStep = (data, step, setError, validationProps) => {
-    const { isEmailValid, isVilleValid, isPasswordValid, isPasswordMatch } =
+const validateStep = (data, step, setError, validationProps = {}) => {
+    const { isEmailValid,isTelValid, isVilleValid, isPasswordValid, isPasswordMatch } =
         validationProps;
     const e = {};
     if (step === 1) {
         if (!data.name.trim()) {
             e.name = "Le Nom est obligatoire";
         } else if (data.name.length < 3) {
-            e.name = "Min 3 caractères";
+            e.name = "Min: 3 caractères";
         } else if (!/^[a-zA-Z\s\u0600-\u06FF-]+$/.test(data.name)) {
             e.name =
                 "Le nom ne doit pas contenir de chiffres ou de caractères spéciaux";
         }
+        if(!data.tel.trim()) e.tel="numéro de télephone est obligatoire";
+        else if(!isTelValid) e.tel = "Format invalide"
+
         if (!data.email.trim()) e.email = "L'email est obligatoire";
         else if (!isEmailValid) e.email = "Email invalide";
-        if (!isVilleValid) e.ville = "La ville est obligatoire";
+        if (!isVilleValid) e.ville_id = "La ville est obligatoire";
     }
 
     if (step === 2) {
@@ -40,8 +43,8 @@ const validateStep = (data, step, setError, validationProps) => {
         }
     }
     if (step === 4 && data.role === "provider") {
-        if (!data.main_image) {
-            e.main_image = "L'image de couverture est obligatoire";
+        if (!data.main_photo) {
+            e.main_photo = "L'image de couverture est obligatoire";
         }
     }
     if (step === 5 && data.role === "provider") {
@@ -52,23 +55,28 @@ const validateStep = (data, step, setError, validationProps) => {
             e.description =
                 "La description doit contenir au moins 20 caractères";
         }
+        if(!data.service.trim()) e.service="Le Nom de Service est obligatoire"
+        else if(data.service.length<3) e.service="Min 3 caractères"
+        else if (/[0-9]/.test(data.service)) {
+        e.service = "Les chiffres ne sont pas autorisés";
+        }
     }
     if (step === 6 && data.role === "provider") {
         if (!data.latitude || !data.longitude) {
             e.location = "Veuillez sélectionner un emplacement sur la carte";
         }
     }
-    if (step === 7 && data.role === "provider") {
-        // نتأكد هل هناك أي يوم يحتوي على ساعات مختارة
-        const hasHours = Object.values(data.working_hours).some(
-            (jour) => jour.length > 0,
-        );
+    // if (step === 7 && data.role === "provider") {
+    //     // نتأكد هل هناك أي يوم يحتوي على ساعات مختارة
+    //     const hasHours = Object.values(data.working_hours).some(
+    //         (jour) => jour.length > 0,
+    //     );
 
-        if (!hasHours) {
-            e.working_hours =
-                "Veuillez sélectionner au moins une heure de travail pour continuer.";
-        }
-    }
+    //     if (!hasHours) {
+    //         e.working_hours =
+    //             "Veuillez sélectionner au moins une heure de travail pour continuer.";
+    //     }
+    // }
 
     setError(e);
     return Object.keys(e).length === 0;

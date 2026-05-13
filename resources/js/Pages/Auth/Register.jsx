@@ -18,19 +18,21 @@ import validateStep from "./Steps/validateSteps";
 // ********************************************//
 // حفظ البيانات النصية والخطوة عند كل تغيير
 // تُنفذ مرة واحدة عند تحميل الصفحة
-export default function Register() {
+export default function Register({ villes, categories }) {
     const [step, setStep] = useState(1);
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
+        tel: "",
         password: "",
         password_confirmation: "",
-        ville: "",
+        ville_id: "",
         photo_profile: "",
         role: "client",
+        service: "",
         category_id: "",
         description: "",
-        main_image: null,
+        main_photo: null,
         working_hours: {
             lun: [],
             mar: [],
@@ -54,6 +56,8 @@ export default function Register() {
     const isPasswordValid = data.password.length >= 8;
     const isPasswordMatch =
         data.password_confirmation === data.password && data.password !== "";
+    const isserviceValid = /^[^0-9]{3,}$/.test(data.service);
+    const isTelValid = /^(?:(?:\+|00)212|0)[5-7]\d{8}$/.test(data.tel);
 
     const nextStep = () => {
         if (
@@ -61,6 +65,7 @@ export default function Register() {
                 isNameValid,
                 isEmailValid,
                 isVilleValid,
+                isTelValid,
                 isPasswordValid,
                 isPasswordMatch,
             })
@@ -90,7 +95,7 @@ export default function Register() {
         // 1. خريطة تربط كل حقل بصورة المعاينة الخاصة به
         const config = {
             photo_profile: { url: photoUrl, setter: setPhotoUrl },
-            main_image: { url: mainPhotoUrl, setter: setMainPhotoUrl },
+            main_photo: { url: mainPhotoUrl, setter: setMainPhotoUrl },
         };
 
         const { url, setter } = config[input_Name];
@@ -113,17 +118,19 @@ export default function Register() {
                 isNameValid,
                 isEmailValid,
                 isVilleValid,
+                isTelValid,
                 isPasswordValid,
                 isPasswordMatch,
-                isVilleValid,
             })
         )
             return;
+        console.log("D", data);
         post(route("register"), {
             onFinish: () => {
                 reset("password", "password_confirmation");
             },
         });
+        console.log("ssss");
     };
 
     return (
@@ -148,10 +155,12 @@ export default function Register() {
                 <form onSubmit={submit} noValidate>
                     {step === 1 && (
                         <Step1
+                            villes={villes}
                             data={data}
                             error={allErrors}
                             getError={getError}
                             isNameValid={isNameValid}
+                            isTelValid={isTelValid}
                             isEmailValid={isEmailValid}
                             handleChange={handleChange}
                             nextStep={nextStep}
@@ -195,9 +204,11 @@ export default function Register() {
                             data={data}
                             nextStep={nextStep}
                             setStep={setStep}
+                            isserviceValid={isserviceValid}
                             handleChange={handleChange}
                             error={allErrors}
                             getError={getError}
+                            categories={categories}
                         />
                     )}
                     {step === 6 && (

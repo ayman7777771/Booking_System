@@ -11,20 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-    Schema::create('plannings', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('provider_id')->constrained()->onDelete('cascade');
-    $table->string('day'); 
-    $table->json('time');
-    $table->timestamps();
-});
-    }
+        Schema::create('villes', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique();
+        $table->timestamps();
+    });
+}
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('plannings');
+        Schema::dropIfExists('villes');
     }
 };

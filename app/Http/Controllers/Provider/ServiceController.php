@@ -3,43 +3,61 @@
 namespace App\Http\Controllers\Provider;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\Provider\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Provider\ServiceRequest;
+use Inertia\Inertia;
+
 
 class ServiceController extends Controller
 {
+    use AuthorizesRequests;
     public function index()
     {
-        $services = Service::with('provider', 'reservations')->get();
-        return response()->json($services);
+        $provider = Auth::user()->provider;
+
+        $services = Service::where('provider_id', $provider->id)
+            ->latest()
+            ->get();
+
+        return Inertia::render('Provider/ServicesTable', [
+            'services' => $services,
+        ]);
     }
 
-    public function store(Request $request)
+    public function create()
     {
-        $service = Service::create($request->validated());
-        return response()->json($service, 201);
+        return Inertia::render('Provider/ServiceTest');
     }
 
-    public function show(Service $service)
+    public function store(ServiceRequest $request)
     {
-        return response()->json($service->load('provider', 'reservations'));
+        Service::create([
+             'provider_id' => auth()->user()->provider->id,
+            ...$request->all(),
+        ]);
+
+        return redirect()->route('provider.services.index');
     }
 
-    public function update(Request $request, Service $service)
+    public function update(ServiceRequest $request, Service $service)
     {
-        $service->update($request->validated());
-        return response()->json($service);
+        $this->authorize('update', $service);
+
+        $service->update($request->all());
+
+        return back();
     }
 
     public function destroy(Service $service)
     {
-        $service->delete();
-        return response()->json(['message' => 'Service deleted']);
-    }
+        $this->authorize('delete', $service);
 
-    public function byProvider($providerId)
-    {
-        $services = Service::where('provider_id', $providerId)->get();
-        return response()->json($services);
+        $service->delete();
+
+        return back();
     }
 }
+ 

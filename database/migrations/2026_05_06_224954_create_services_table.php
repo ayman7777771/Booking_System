@@ -14,7 +14,7 @@ return new class extends Migration
    {
     Schema::create('services', function (Blueprint $table) {
         $table->id();
-        $table->string('nom');
+        $table->string('name');
         $table->decimal('prix', 10, 2);
         $table->integer('duration')->nullable();
         $table->foreignId('provider_id')->constrained('providers')->onDelete('cascade');
