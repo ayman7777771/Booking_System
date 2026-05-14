@@ -3,43 +3,34 @@
 namespace App\Http\Controllers\Provider;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Provider\PlanningRequest;
 use App\Models\Provider\Planning;
 use Illuminate\Http\Request;
 
 class PlanningController extends Controller
 {
-    public function index()
-    {
-        $plannings = Planning::with('provider')->get();
-        return response()->json($plannings);
-    }
+  public function store(PlanningRequest $request)
+{
+    $this->authorize('create', Planning::class);
+    $provider = auth()->user()->provider;
+    Planning::create([
+        'provider_id' =>$provider->id,
+        'day' => $request->day,
+        'time' => $request->time,
+    ]);
+    return back();
+}
+public function update(PlanningRequest $request, Planning $planning)
+{
+    $this->authorize('update', $planning);
+    $planning->update($request->validated());
+    return back();
+}
 
-    public function store(Request $request)
-    {
-        $planning = Planning::create($request->validated());
-        return response()->json($planning, 201);
-    }
-
-    public function show(Planning $planning)
-    {
-        return response()->json($planning->load('provider'));
-    }
-
-    public function update(Request $request, Planning $planning)
-    {
-        $planning->update($request->validated());
-        return response()->json($planning);
-    }
-
-    public function destroy(Planning $planning)
-    {
-        $planning->delete();
-        return response()->json(['message' => 'Planning deleted']);
-    }
-
-    public function byProvider($providerId)
-    {
-        $plannings = Planning::where('provider_id', $providerId)->get();
-        return response()->json($plannings);
-    }
+public function destroy(Planning $planning)
+{
+    $this->authorize('delete', $planning);
+    $planning->delete();
+    return back();
+}
 }

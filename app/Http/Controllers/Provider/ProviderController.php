@@ -9,6 +9,7 @@ use App\Models\Provider\Provider;
 use App\Models\Ville;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
 
 class ProviderController extends Controller
 {
@@ -70,10 +71,16 @@ class ProviderController extends Controller
     public function update(ProviderRequest $request, Provider $provider)
     {
     $this->authorize('update', $provider);
-
-    $provider->update($request->validated());
-
-    return back();
+    $data = $request->validated();
+    if ($request->hasFile('main_photo')) {
+        if ($provider->main_photo) {
+            Storage::disk('public')->delete($provider->main_photo);
     }
-      
+    $path = $request->file('main_photo')
+        ->store('providers', 'public');
+    $data['main_photo'] = $path;
+    }
+    $provider->update($data);
+    return back()->with('success', 'Profile updated successfully.');
+    }  
 }

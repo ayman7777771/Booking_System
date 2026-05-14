@@ -8,5 +8,11 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PlanningFactory extends Factory
 {
-   
+   protected $model = Planning::class;
+   public function definition(): array
+    {
+        return [
+            //
+        ];
+    }
 }

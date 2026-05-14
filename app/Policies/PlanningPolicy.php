@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Provider\Provider;
+use App\Models\Provider\Planning;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class ProviderPolicy
+class PlanningPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,7 +19,7 @@ class ProviderPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Provider $provider): bool
+    public function view(User $user, Planning $planning): bool
     {
         return false;
     }
@@ -29,30 +29,29 @@ class ProviderPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->role === 'provider';
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Provider $provider): bool
+    public function update(User $user, Planning $planning): bool
     {
-        return $user->role === 'provider' && $user->id === $provider->user_id;
+        return $user->role === 'provider' && $user->id === $planning->provider->user_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Provider $provider): bool
+    public function delete(User $user, Planning $planning): bool
     {
-        
-        return false;
+        return $user->role === 'provider' && $user->id === $planning->provider->user_id;
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Provider $provider): bool
+    public function restore(User $user, Planning $planning): bool
     {
         return false;
     }
@@ -60,7 +59,7 @@ class ProviderPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Provider $provider): bool
+    public function forceDelete(User $user, Planning $planning): bool
     {
         return false;
     }
