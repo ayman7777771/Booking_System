@@ -22,7 +22,7 @@ class ServiceController extends Controller
             ->latest()
             ->get();
 
-        return Inertia::render('Provider/ServicesTable', [
+        return Inertia::render('Provider/Profile', [
             'services' => $services,
         ]);
     }

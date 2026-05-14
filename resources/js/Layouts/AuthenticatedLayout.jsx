@@ -1,52 +1,21 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import { Link, usePage } from '@inertiajs/react';
+import Navbar from "@/Components/Navbar";
 
 export default function AuthenticatedLayout({ header, children }) {
-    const user = usePage().props.auth.user;
-
     return (
-        <div>
-            <nav>
-                <div>
-                    <div>
-                        <Link href="/">
-                            {/* <ApplicationLogo /> */}
-                            Home
-                        </Link>
-                    </div>
+        <div className="app-layout">
 
-                    <div>
-                        <Link href={route('dashboard')}>
-                            Dashboard
-                        </Link> {/* active={route().current('dashboard')} */}
-                    </div>
-                </div>
-
-                <div>
-                    {user.name}
-
-                    <Link href={route('profile.edit')}>
-                        Profile
-                    </Link>
-                    <Link
-                        href={route('logout')}
-                        method="post"
-                        as="button"
-                    >
-                        Log Out
-                    </Link>
-                </div>
-            </nav>
+            <Navbar />
 
             {header && (
-                <header>
-                    <div>
-                        {header}
-                    </div>
+                <header className="page-header">
+                    {header}
                 </header>
             )}
 
-            <main>{children}</main>
+            <main className="page-content">
+                {children}
+            </main>
+
         </div>
     );
 }

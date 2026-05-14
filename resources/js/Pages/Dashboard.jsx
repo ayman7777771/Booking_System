@@ -1,23 +1,20 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import Filters from "@/Components/Filters";
+import ProvidersCards from "@/Components/ProvidersCards";
 
-
-export default function Dashboard() {
+export default function Dashboard(props) {
     return (
         <AuthenticatedLayout
             header={
-                <h2>Dashboard</h2>
-            }
-            main={
-                <div>
-                    You're logged in!
-                </div>
+                <Filters
+                    filters={props.filters}
+                    villes={props.villes}
+                    categories={props.categories}
+                />
             }
         >
-            <Head title="Dashboard" />
 
-            
-            
+            <ProvidersCards providers={props.providers} />
 
         </AuthenticatedLayout>
     );
