@@ -2,25 +2,26 @@
 
 namespace App\Policies;
 
+use App\Models\Provider;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class UserPolicy
+class ProviderPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return false;
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, User $model): bool
+    public function view(User $user, Provider $provider): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -34,29 +35,24 @@ class UserPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, User $model): bool
+    public function update(User $user, Provider $provider): bool
     {
-         return $user->id === $model->id;
+        return $user->id === $provider->user_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, User $model): bool
+    public function delete(User $user, Provider $provider): bool
     {
-        return $user->id === $model->id;
-    }
-
-    public function deletePhoto(User $user, User $model): bool
-    {
-    return $user->id === $model->id
-        && $user->role !=='provider';
+        
+        return false;
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, User $model): bool
+    public function restore(User $user, Provider $provider): bool
     {
         return false;
     }
@@ -64,7 +60,7 @@ class UserPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, User $model): bool
+    public function forceDelete(User $user, Provider $provider): bool
     {
         return false;
     }

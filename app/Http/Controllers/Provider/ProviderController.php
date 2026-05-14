@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Provider;
 
-use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Provider\ServiceRequest;
+use App\Http\Requests\ProviderRequest;
 use App\Models\Categorie;
 use App\Models\Provider\Provider;
-use App\Models\Provider\Service;
 use App\Models\Ville;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -29,11 +27,11 @@ class ProviderController extends Controller
         ->latest()
         ->paginate(15);
 
-    return Inertia::render('Discover', [
+    return Inertia::render('Dashboard', [
         'providers' => $providers,
         'filters' => compact('search'),
-        'villes' => Ville::all(),
-        'categories' => Categorie::all(),
+        'categories' => Categorie::orderBy('name')->get(),
+        'villes' => Ville::orderBy('name')->get(),
     ]);
 }
     private function getProviderData()
@@ -57,24 +55,23 @@ class ProviderController extends Controller
 
     public function profile()
     {
-        $provider = $this->getProviderData();
-
-    $reviews = $provider->reviews()
+       $provider = $this->getProviderData();
+       $reviews = $provider->reviews()
         ->with('user')
         ->latest()
-        ->paginate(5);
-
+        ->paginate(11);
+        
     return Inertia::render('Provider/Profile', [
         'provider' => $provider,
         'reviews' => $reviews
     ]);
        
     }
-    public function update(ServiceRequest $request, Service $service)
+    public function update(ProviderRequest $request, Provider $provider)
     {
-    $this->authorize('update', $service);
+    $this->authorize('update', $provider);
 
-    $service->update($request->validated());
+    $provider->update($request->validated());
 
     return back();
     }

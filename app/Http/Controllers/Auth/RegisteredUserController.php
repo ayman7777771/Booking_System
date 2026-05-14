@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;<
+namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Provider\Provider;
@@ -20,7 +20,7 @@ use App\Models\Categorie;
 class RegisteredUserController extends Controller
 {
     /**
-     * Display the registration view.
+     * 
      */
     public function create(): Response
     {
@@ -90,7 +90,6 @@ class RegisteredUserController extends Controller
             'main_photo' => $mainImagePath,
             'longitude' => (float) ($data['longitude']),
             'latitude' => (float) ($data['latitude']),
-            'rating' => 0,
         ]);
     }
 
@@ -107,11 +106,11 @@ class RegisteredUserController extends Controller
             'dim' => 'Dim',
         ];
 
-        foreach ($daysMap as $key => $dayName) {
+        foreach ($daysMap as $key => $d) {
             if (!empty($workingHours[$key])) {
                 Planning::create([
                     'provider_id' => $provider->id,
-                    'day' => $dayName,
+                    'day' => $d,
                     'time' => $workingHours[$key],
                 ]);
             }
