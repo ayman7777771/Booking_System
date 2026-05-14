@@ -2,45 +2,81 @@
 
 namespace App\Http\Controllers\Provider;
 
+use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Provider\ServiceRequest;
+use App\Models\Categorie;
 use App\Models\Provider\Provider;
+use App\Models\Provider\Service;
+use App\Models\Ville;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ProviderController extends Controller
 {
-    public function index()
+   public function index(Request $request)
+{
+    $search = $request->search;
+    $providers = Provider::with(['user.ville', 'category'])
+        ->when($search, fn ($q) =>
+            $q->where(function ($q) use ($search) {
+                $q->where('service', 'like', "%{$search}%")
+                  ->orWhereHas('user', fn ($uq) =>
+                      $uq->where('name', 'like', "%{$search}%")
+                  );
+            })
+        )
+        ->latest()
+        ->paginate(15);
+
+    return Inertia::render('Discover', [
+        'providers' => $providers,
+        'filters' => compact('search'),
+        'villes' => Ville::all(),
+        'categories' => Categorie::all(),
+    ]);
+}
+    private function getProviderData()
     {
-        $providers = Provider::with('user', 'categorie', 'services', 'reviews')->get();
-        return response()->json($providers);
+        $provider = auth()->user()->provider;
+        return $provider->load([
+            'user.ville',
+            'categorie',
+            'services',
+            'plannings',
+            'photos'
+        ]);
     }
 
-    public function store(Request $request)
+    public function dashboard()
     {
-        $provider = Provider::create($request->validated());
-        return response()->json($provider, 201);
+        return Inertia::render('Provider/Dashboard', [
+            'provider' => $this->getProviderData()
+        ]);
     }
 
-    public function show(Provider $provider)
+    public function profile()
     {
-        return response()->json($provider->load('user', 'categorie', 'services', 'reviews'));
-    }
+        $provider = $this->getProviderData();
 
-    public function update(Request $request, Provider $provider)
-    {
-        $provider->update($request->validated());
-        return response()->json($provider);
-    }
+    $reviews = $provider->reviews()
+        ->with('user')
+        ->latest()
+        ->paginate(5);
 
-    public function destroy(Provider $provider)
-    {
-        $provider->delete();
-        return response()->json(['message' => 'Provider deleted']);
+    return Inertia::render('Provider/Profile', [
+        'provider' => $provider,
+        'reviews' => $reviews
+    ]);
+       
     }
+    public function update(ServiceRequest $request, Service $service)
+    {
+    $this->authorize('update', $service);
 
-    public function updateRating(Provider $provider)
-    {
-        $avgRating = $provider->reviews()->avg('rating');
-        $provider->update(['rating' => $avgRating]);
-        return response()->json($provider);
+    $service->update($request->validated());
+
+    return back();
     }
+      
 }

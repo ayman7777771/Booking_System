@@ -26,7 +26,6 @@ class RegisterRequest extends FormRequest
             'name' => 'required|string|min:3|max:90',
             'email' => 'required|string|email|max:155|unique:users,email',
             'ville_id' => 'required|exists:villes,id',
-
             'password' => [
                 'required',
                 'confirmed',
@@ -37,7 +36,7 @@ class RegisterRequest extends FormRequest
             'photo_profile' => 'required_if:role,provider|nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'tel' => 'required|string|max:13|unique:users,tel',
             'role' => 'required|in:client,provider',
-            'main_photo' => 'required_if:role,provider|nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'main_photo' => 'required_if:role,provider|nullable|image|mimes:jpeg,png,jpg,gif|max:3048',
             'category_id' => 'required_if:role,provider|nullable|integer|exists:categories,id',
             'description' => 'required_if:role,provider|nullable|string|min:20|max:2500',
             'service' => 'required_if:role,provider|nullable|string|min:3|max:150',
