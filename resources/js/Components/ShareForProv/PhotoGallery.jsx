@@ -1,5 +1,6 @@
 import { Plus, X } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { router } from "@inertiajs/react";
 
 const photoUrl = (path) => {
     if (!path) {
@@ -22,23 +23,43 @@ export default function PhotoGallery({
     showUploadButton = true,
 }) {
     const champFichierRef = useRef(null);
+    const [deletingPhotoId, setDeletingPhotoId] = useState(null);
+
+    const handleDeletePhoto = (photo) => {
+        setDeletingPhotoId(photo.id);
+        router.delete(route("provider.photos.destroy", photo.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setDeletingPhotoId(null);
+                onRemove?.(photo);
+            },
+            onError: () => {
+                setDeletingPhotoId(null);
+            },
+        });
+    };
 
     return (
         <div>
             <div className="dashboard-gallery">
                 {photos.length ? (
                     photos.map((photo) => (
-                        <div key={photo.id} className="dashboard-gallery-item">
-                            <img src={photoUrl(photo.path)} alt="Galerie" />
-                            {isEdit && onRemove && (
-                                <button
-                                    className="btn btn-sm btn-danger"
-                                    type="button"
-                                    onClick={() => onRemove?.(photo)}
-                                >
-                                    <X size={14} />
-                                </button>
-                            )}
+                        <div key={photo.id} className="dashboard-gallery-item-wrapper">
+                            <div className="dashboard-gallery-item">
+                                <img src={photoUrl(photo.path)} alt="Galerie" />
+                                {isEdit && (
+                                    <button
+                                        className="photo-delete-btn"
+                                        type="button"
+                                        onClick={() => handleDeletePhoto(photo)}
+                                        disabled={deletingPhotoId === photo.id}
+                                        title="Supprimer la photo"
+                                        aria-label="Supprimer la photo"
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     ))
                 ) : (
