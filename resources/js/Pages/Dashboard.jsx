@@ -1,16 +1,28 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import ServiceCard from '@/Components/ServiceCard'; // T-akked beli had l-component kine
+import { Head, useForm } from '@inertiajs/react';
+import ServiceCard from '@/Components/ProviderCard';
 
-export default function Dashboard({ auth, services }) {
+// N-astaqblou provider, villes, u categories li sifetna men l-Controller
+export default function Dashboard({ auth, provider, villes, categories, filters }) {
+    
+    // Logic dyal l-Search (Inertia useForm bach n-sifto l-data)
+    const { data, setData, get } = useForm({
+        search: filters?.search || '',
+    });
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        get(route('dashboard'), { preserveState: true });
+    };
+
     return (
-        <AuthenticatedLayout auth={auth}>
-            <Head title="Discover - Dashboard" />
+        <AuthenticatedLayout user={auth.user}>
+            <Head title="Provider Dashboard" />
 
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
                 
-                {/* 1. Filter Section (Recherche / Catégorie / Ville) */}
-                <div style={{ 
+                {/* 1. Filter Section */}
+                <form onSubmit={handleSearch} style={{ 
                     display: 'flex', 
                     gap: '15px', 
                     marginBottom: '40px',
@@ -20,39 +32,30 @@ export default function Dashboard({ auth, services }) {
                         <span style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)' }}>🔍</span>
                         <input 
                             type="text"
-                            placeholder="Recherche..." 
+                            value={data.search}
+                            onChange={e => setData('search', e.target.value)}
+                            placeholder="Recherche dans vos services..." 
                             style={{ 
                                 width: '100%', 
                                 padding: '12px 12px 12px 40px', 
                                 borderRadius: '15px', 
-                                border: '1px solid var(--input-border)',
-                                backgroundColor: 'var(--bg-card)',
-                                color: 'var(--text-main)'
+                                border: '1px solid #ddd',
+                                backgroundColor: '#fff',
+                                color: '#333'
                             }} 
                         />
                     </div>
-                    <select style={{ 
-                        padding: '12px', 
-                        borderRadius: '15px', 
-                        border: '1px solid var(--input-border)',
-                        backgroundColor: 'var(--bg-card)',
-                        color: 'var(--text-main)',
-                        minWidth: '150px'
-                    }}>
-                        <option>Catégorie...</option>
+
+                    {/* Ville Select */}
+                    <select style={{ padding: '12px', borderRadius: '15px', border: '1px solid #ddd', minWidth: '150px' }}>
+                        <option value="">Toutes les villes</option>
+                        {villes?.map(ville => (
+                            <option key={ville.id} value={ville.id}>{ville.nom}</option>
+                        ))}
                     </select>
 
-                    <select style={{ 
-                        padding: '12px', 
-                        borderRadius: '15px', 
-                        border: '1px solid var(--input-border)',
-                        backgroundColor: 'var(--bg-card)',
-                        color: 'var(--text-main)',
-                        minWidth: '150px'
-                    }}>
-                        <option>Fès, Maroc</option>
-                    </select>
-                </div>
+                    <button type="submit" className="btn btn-primary" style={{ borderRadius: '15px' }}>Filtrer</button>
+                </form>
 
                 {/* 2. Grid dyal les Cards */}
                 <div style={{ 
@@ -60,13 +63,14 @@ export default function Dashboard({ auth, services }) {
                     gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
                     gap: '30px' 
                 }}>
-                    {services && services.length > 0 ? (
-                        services.map((service) => (
+                    {/* Hna kan-loopiyou 3la services dyal l-provider */}
+                    {provider?.services && provider.services.length > 0 ? (
+                        provider.services.map((service) => (
                             <ServiceCard key={service.id} service={service} />
                         ))
                     ) : (
-                        <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '50px', color: 'var(--text-main)' }}>
-                            Aucun service disponible pour le moment.
+                        <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '50px', color: '#666' }}>
+                            Aucun service trouvé.
                         </div>
                     )}
                 </div>

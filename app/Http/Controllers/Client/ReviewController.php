@@ -10,36 +10,38 @@ use Inertia\Inertia;
 
 class ReviewController extends Controller
 {
-    public function index()
-{
-    // 1. Kan-jibu l-reviews dyal l-user li m-connecti daba
-    // u kan-jibu m3ahom l-service bach n-3arfu kola review dyal ay khidma
-    $reviews = Review::with('service')
-        ->where('client_id', Auth::id())
-        ->latest() // Bach i-bano l-jdid houma l-lowlin
-        ->get();
-
-    // 2. Render-i l-page React (matsaybha f resources/js/Pages/Client/Reviews.jsx)
-    return Inertia::render('Client/Reviews', [
-        'reviews' => $reviews
-    ]);
-}
     /**
-     * Khazan t-aqyim jdid (Create or Update)
+     * 1. Wadifa: Afficher (عرض) la page des avis du client connected
+     */
+    public function index()
+    {
+        // Kan-jibu l-reviews dyal l-user li m-connecti daba m3a l-service dyalhom
+        $reviews = Review::with('service')
+            ->where('client_id', Auth::id())
+            ->latest() // L-jdid hwa l-lowal
+            ->get();
+
+        // Render-i l-page React dyalk s-afiya
+        return Inertia::render('Client/Reviews', [
+            'reviews' => $reviews
+        ]);
+    }
+
+    /**
+     * 2. Wadifa: Enregistrer (خزن) awla modifier un avis + Calculer la moyenne
      */
     public function store(Request $request)
     {
-        // 1. Validat l-data
         $request->validate([
             'service_id' => 'required|exists:services,id',
             'note' => 'required|integer|min:1|max:5',
             'commentaire' => 'nullable|string|max:500',
         ]);
 
-        // 2. Khazan n-natiza (updateOrCreate bach l-client may-foutsh review wahed l-kol service)
-        $review=Review::updateOrCreate(
+        // Enregistrement dyal l-review
+        $review = Review::updateOrCreate(
             [
-                'client_id' => Auth::id(), // ID dyal l-user li m-konikti
+                'client_id' => Auth::id(), 
                 'service_id' => $request->service_id
             ],
             [
@@ -47,25 +49,29 @@ class ReviewController extends Controller
                 'commentaire' => $request->commentaire
             ]
         );
-        $service = $review->service;
-    $average = $service->reviews()->avg('note'); // k-i-hseb l-moyenne
-    $service->update(['moyenne_note' => $average]);
 
-        // 3. Rje' l-lour b message dyal najaḥ
+        // Hna k-i-hseb l-moyenne d l-khidma u kiy-update-iha direct f table services
+        $service = $review->service;
+        if ($service) {
+            $average = $service->reviews()->avg('note'); 
+            $service->update(['moyenne_note' => $average]);
+        }
+
         return back()->with('success', 'Avis bien enregistré !');
     }
 
     /**
-     * Delete review (ila bgha l-client i-mseḥ taqyim dyalu)
+     * 3. Wadifa: Supprimer (مسح) un avis
      */
     public function destroy(Review $review)
     {
-        // T-akd bli ghir mol review li i-qdar i-mshou
+        // T-akked blli ghir s7ab l-review li i-qder i-mṣaḥha
         if (Auth::id() !== $review->client_id) {
             abort(403);
         }
 
         $review->delete();
+        
         return back()->with('success', 'Avis supprimé.');
     }
 }

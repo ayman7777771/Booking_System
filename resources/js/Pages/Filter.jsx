@@ -1,6 +1,6 @@
 import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import ServiceCard from '@/Components/ServiceCard';
+import ServiceCard from '@/Components/ProviderCard';
 
 export default function Filter({ auth, services }) {
     return (

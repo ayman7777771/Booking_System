@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ServiceCard({ service }) {
+export default function ProviderCard({ service }) {
     // 1. Path dyal l-tsawer
     const mainImg = service.provider?.Mainphoto ? `/storage/${service.provider.Mainphoto}` : '/default.jpg';
     const profileImg = service.provider?.utilisateur?.photoProfile ? `/storage/${service.provider.utilisateur.photoProfile}` : '/avatar.png';

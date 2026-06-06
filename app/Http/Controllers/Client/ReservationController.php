@@ -12,14 +12,38 @@ class ReservationController extends Controller
 {
     public function index()
     {
-        $reservations = Reservation::with('service.provider.utilisateur') // Jbed smiyt l-coiffeur/service
-        ->where('client_id', Auth::id())
-        ->orderBy('date', 'desc')
-        ->get();
+        try {
+        $user = Auth::user();
 
-    return Inertia::render('Client/MyReservations', [
-        'reservations' => $reservations
-    ]);
+        // 1. ILA KAN USER "PROVIDER"
+        if ($user && $user->provider) {
+            // S-iyfet l-provider l-page dyalu b les réservations dyalu direct
+            $providerReservations = \App\Models\Client\Reservation::with(['client.user', 'service'])
+                ->whereHas('service', function($query) use ($user) {
+                    $query->where('provider_id', $user->provider->id);
+                })
+                ->latest()
+                ->get();
+
+            return Inertia::render('Provider/DashboardReservations', [
+                'reservations' => $providerReservations
+            ]);
+        }
+
+        // 2. ILA KAN USER "CLIENT"
+        // Hna khdemna b l-code dyalk walakin zdna t-akkadna mn l-columns
+        $reservations = Reservation::with(['service.provider.utilisateur']) 
+            ->where('client_id', Auth::id())
+            ->get();
+
+        return Inertia::render('Client/MyReservations', [
+            'reservations' => $reservations
+        ]);
+
+    } catch (\Exception $e) {
+        // Hād l-blasa hya li ghadi t-mna3 500 error u t-biyen lik r-risala d l-mouchkil s-afiya f l-wjeh!
+        dd("L-Mouchkil jayi mn had l-stire: " . $e->getMessage());
+    }
     }
 
     public function store(Request $request)
