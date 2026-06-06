@@ -40,8 +40,9 @@ export default function Dashboard({ provider, categories = [], reservations = []
     const photos = useMemo(() => services.flatMap((service) => service.photos || []), [services]);
     const [toast, setToast] = useState(null);
     const [planning, setPlanning] = useState(toHours(provider?.plannings));
+    const [clearPhoto, setClearPhoto] = useState(0);
     const [editingService, setEditingService] = useState(null);
-    const [enregistrementGlobal, setEnregistrementGlobal] = useState(false);
+    const [enregistrement, setEnregistrement] = useState(false);
     const profile = useForm(donneesProfil(provider));
     const gallery = useForm({ service_id: `${services[0]?.id || ""}`, photos: [] });
     const agenda = useForm({ working_hours: planning });
@@ -93,59 +94,82 @@ export default function Dashboard({ provider, categories = [], reservations = []
 
         return executerFormulaire(service, method, url, { preserveScroll: true });
     };
-    const enregistrerTout = async () => {
-        const aDesDonneesService = Object.values(service.data).some((value) => `${value}`.trim());
+   const enregistrerTout = async () => {
+    const hasServiceData = Object.values(service.data)
+        .some(value => `${value}`.trim());
 
-        setEnregistrementGlobal(true);
+    const hasMainPhoto = !!profile.data.main_photo;
+    const hasGalleryPhotos =
+        gallery.data.service_id &&
+        gallery.data.photos.length > 0;
 
-        try {
-            const hasMainPhoto = profile.data.main_photo !== null;
-            const hasGalleryPhotos = gallery.data.service_id && gallery.data.photos.length > 0;
+    const profileChanged =
+        hasMainPhoto ||
+        profile.data.description !== provider.description ||
+        profile.data.service !== provider.service ||
+        profile.data.categorie_id !== `${provider?.categorie_id || provider?.categorie?.id || ""}` ||
+        profile.data.longitude !== (provider?.longitude ?? "") ||
+        profile.data.latitude !== (provider?.latitude ?? "");
 
-            if (hasMainPhoto || profile.data.description !== provider.description || profile.data.service !== provider.service || 
-                profile.data.categorie_id !== `${provider?.categorie_id || provider?.categorie?.id || ""}` ||
-                profile.data.longitude !== (provider?.longitude ?? "") || profile.data.latitude !== (provider?.latitude ?? "")) {
-                
-                const profileData = { ...profile.data };
-                if (!hasMainPhoto) {
-                    delete profileData.main_photo;
-                }
-                
-                await new Promise((resolve, reject) => {
-                    profile.post(route("provider.profile.update", provider.id), {
-                        forceFormData: true,
-                        preserveScroll: true,
-                        data: profileData,
-                        onSuccess: () => resolve(),
-                        onError: (errors) => reject(errors),
-                    });
-                });
-            }
+    setEnregistrement(true);
 
-            await executerFormulaire(agenda, "post", route("provider.plannings.store"), { preserveScroll: true });
-
-            if (hasGalleryPhotos) {
-                await executerFormulaire(gallery, "post", route("provider.services.photos.store", gallery.data.service_id), {
+    try {
+        if (profileChanged) {
+            await executerFormulaire(
+                profile,
+                "patch",
+                route("provider.profile.update", provider.id),
+                {
                     forceFormData: true,
                     preserveScroll: true,
-                });
-                gallery.reset("photos");
-            }
-
-            if (aDesDonneesService) {
-                await enregistrerService();
-                setEditingService(null);
-                service.setData({ name: "", prix: "", duration: "" });
-            }
-
-            notify("success", "Toutes les informations ont ete enregistrees.");
-        } catch (errors) {
-            notify("danger", Object.values(errors || {})[0] || "Verifiez les informations avant d'enregistrer.");
-        } finally {
-            setEnregistrementGlobal(false);
+                }
+            );
         }
-    };
-    const enCoursEnregistrement = enregistrementGlobal || profile.processing || gallery.processing || agenda.processing || service.processing;
+
+        await executerFormulaire(
+            agenda,
+            "post",
+            route("provider.plannings.store"),
+            { preserveScroll: true }
+        );
+
+        if (hasGalleryPhotos) {
+            await executerFormulaire(
+                gallery,
+                "post",
+                route("provider.services.photos.store", gallery.data.service_id),
+                {
+                    forceFormData: true,
+                    preserveScroll: true,
+                }
+            );
+
+            gallery.reset("photos");
+            setClearPhoto(n => n + 1);
+        }
+
+        if (hasServiceData) {
+            await enregistrerService();
+            setEditingService(null);
+            service.setData({
+                name: "",
+                prix: "",
+                duration: "",
+            });
+        }
+
+        notify("success", "Toutes les informations ont ete enregistrees.");
+    } catch (errors) {
+        notify(
+            "danger",
+            Object.values(errors || {})[0] ||
+            "Verifiez les informations avant d'enregistrer."
+        );
+    } finally {
+        setEnregistrement(false);
+    }
+};
+    const enCoursEnregistrement = enregistrement || profile.processing || gallery.processing || agenda.processing || service.processing;
     const isReady =
     provider &&
     provider.user &&
@@ -180,14 +204,13 @@ export default function Dashboard({ provider, categories = [], reservations = []
                                     <h2 className="panel-title">Galerie de Photos</h2>
                                     <PhotoGallery
                                         photos={photos}
-                                        services={services}
                                         isEdit
-                                        serviceId={gallery.data.service_id}
                                         processing={gallery.processing}
                                         onServiceChange={(id) => gallery.setData("service_id", id)}
                                         onFilesChange={(files) => gallery.setData("photos", files)}
                                         onUpload={() => {}}
                                         showUploadButton={false}
+                                        onClearPhoto={clearPhoto}
                                     />
                                 </div>
                                 <div className="col-12">

@@ -28,7 +28,6 @@ export default function ServiceTest() {
         }
     };
 
-    // simulate edit (غادي تستعملها من table من بعد)
     const startEdit = (service) => {
         setData({
             name: service.name,
@@ -78,7 +77,6 @@ export default function ServiceTest() {
                 </button>
             </form>
 
-            {/* TEST BUTTON (simulate edit) */}
             <button
                 onClick={() =>
                     startEdit({
