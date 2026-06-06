@@ -23,8 +23,7 @@ const imageUrl = (path) => {
 
     return path.startsWith("http") || path.startsWith("/") ? path : `/storage/${path}`;
 };
-  const donneesProfil = (provider) => ({
-    _method: "patch",
+const donneesProfil = (provider) => ({
     service: provider?.service || "",
     categorie_id: `${provider?.categorie_id || provider?.categorie?.id || ""}`,
     description: provider?.description || "",
@@ -100,13 +99,32 @@ export default function Dashboard({ provider, categories = [], reservations = []
         setEnregistrementGlobal(true);
 
         try {
-            await executerFormulaire(profile, "post", route("provider.profile.update", provider.id), {
-                forceFormData: true,
-                preserveScroll: true,
-            });
+            const hasMainPhoto = profile.data.main_photo !== null;
+            const hasGalleryPhotos = gallery.data.service_id && gallery.data.photos.length > 0;
+
+            if (hasMainPhoto || profile.data.description !== provider.description || profile.data.service !== provider.service || 
+                profile.data.categorie_id !== `${provider?.categorie_id || provider?.categorie?.id || ""}` ||
+                profile.data.longitude !== (provider?.longitude ?? "") || profile.data.latitude !== (provider?.latitude ?? "")) {
+                
+                const profileData = { ...profile.data };
+                if (!hasMainPhoto) {
+                    delete profileData.main_photo;
+                }
+                
+                await new Promise((resolve, reject) => {
+                    profile.post(route("provider.profile.update", provider.id), {
+                        forceFormData: true,
+                        preserveScroll: true,
+                        data: profileData,
+                        onSuccess: () => resolve(),
+                        onError: (errors) => reject(errors),
+                    });
+                });
+            }
+
             await executerFormulaire(agenda, "post", route("provider.plannings.store"), { preserveScroll: true });
 
-            if (gallery.data.service_id && gallery.data.photos.length) {
+            if (hasGalleryPhotos) {
                 await executerFormulaire(gallery, "post", route("provider.services.photos.store", gallery.data.service_id), {
                     forceFormData: true,
                     preserveScroll: true,
@@ -168,6 +186,7 @@ export default function Dashboard({ provider, categories = [], reservations = []
                                         processing={gallery.processing}
                                         onServiceChange={(id) => gallery.setData("service_id", id)}
                                         onFilesChange={(files) => gallery.setData("photos", files)}
+                                        onUpload={() => {}}
                                         showUploadButton={false}
                                     />
                                 </div>
