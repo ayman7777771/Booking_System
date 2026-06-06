@@ -1,4 +1,5 @@
 import React from "react";
+import WorkingHoursTable from "@/Components/ShareForProv/WorkingHoursTable";
 
 export default function Step7({
     data,
@@ -7,117 +8,18 @@ export default function Step7({
     processing,
     error,
 }) {
-    const days = [
-        { id: "lun", name: "Lun" },
-        { id: "mar", name: "Mar" },
-        { id: "mer", name: "Mer" },
-        { id: "jeu", name: "Jeu" },
-        { id: "ven", name: "Ven" },
-        { id: "sam", name: "Sam" },
-        { id: "dim", name: "Dim" },
-    ];
-
-    const time = [];
-    for (let i = 6; i <= 24; i++) {
-        time.push(`${i.toString().padStart(2, "0")}:00`);
-    }
-
-    const toggleSlot = (day, heure) => {
-        const currDay = data.working_hours[day] || [];
-        let newHours;
-
-        if (currDay.includes(heure)) {
-            newHours = currDay.filter((s) => s !== heure);
-        } else {
-            newHours = [...currDay, heure].sort();
-        }
-
-        setData("working_hours", {
-            ...data.working_hours,
-            [day]: newHours,
-        });
-    };
-
     return (
         <div className="animate__animated animate__fadeIn">
             <h5 className="text-center fw-bold mb-1">Votre Agenda</h5>
             <p className="text-muted text-center small mb-3">
                 Cliquez sur les heures qui seront disponibles
             </p>
-            <div
-                className="table-responsive border rounded shadow-sm"
-                style={{ maxHeight: "350px" }}
-            >
-                <table className="table table-sm table-bordered mb-0 text-center">
-                    <thead className="bg-light sticky-top">
-                        <tr>
-                            <th
-                                className="small py-2"
-                                style={{
-                                    width: "60px",
-                                    backgroundColor: "#e5eef6",
-                                }}
-                            >
-                                Heure
-                            </th>
-                            {days.map((day) => (
-                                <th
-                                    key={day.id}
-                                    className="small py-2"
-                                    style={{
-                                        width: "60px",
-                                        backgroundColor: "#e5eef6",
-                                    }}
-                                >
-                                    {day.name}
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {time.map((heure) => (
-                            <tr key={heure}>
-                                <td
-                                    className="small align-middle fw-bold bg-light"
-                                    style={{ fontSize: "12px" }}
-                                >
-                                    {heure}
-                                </td>
-                                {days.map((day) => {
-                                    const isSelected =
-                                        data.working_hours[day.id]?.includes(
-                                            heure,
-                                        );
-                                    return (
-                                        <td
-                                            key={`${day.id}-${heure}`}
-                                            onClick={() =>
-                                                toggleSlot(day.id, heure)
-                                            }
-                                            className="cursor-pointer transition-all"
-                                            style={{
-                                                height: "35px",
-                                                cursor: "pointer",
-                                                backgroundColor: isSelected
-                                                    ? "#3ed1e7"
-                                                    : "transparent",
-                                                borderColor: isSelected
-                                                    ? "#3ed1e7"
-                                                    : "",
-                                                transition: "0.3s",
-                                            }}
-                                        >
-                                            {isSelected && (
-                                                <i className="bi bi-check-lg text-white"></i>
-                                            )}
-                                        </td>
-                                    );
-                                })}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <WorkingHoursTable
+                value={data.working_hours}
+                onChange={(workingHours) =>
+                    setData("working_hours", workingHours)
+                }
+            />
             <div className="mt-2" style={{ minHeight: "19px" }}>
                 {error.working_hours && (
                     <small

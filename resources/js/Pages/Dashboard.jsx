@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
 import ServiceCard from '@/Components/ProviderCard';
@@ -45,6 +46,49 @@ export default function Dashboard({ auth, provider, villes, categories, filters 
                             }} 
                         />
                     </div>
+=======
+// import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+// // import Filters from "@/Components/Filters";
+// import ProvidersCards from "@/Components/ProvidersCards";
+
+// export default function Dashboard(props) {
+//     return (
+//         <AuthenticatedLayout
+//             header={
+//                 <Filters
+//                     filters={props.filters}
+//                     villes={props.villes}
+//                     categories={props.categories}
+//                 />
+//             }
+//         >
+
+//             <ProvidersCards providers={props.providers} />
+
+//         </AuthenticatedLayout>
+//     );
+// }
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head } from '@inertiajs/react';
+
+
+export default function Dashboard() {
+    return (
+        <AuthenticatedLayout
+            header={
+                <h2>Dashboard</h2>
+            }
+            main={
+                <div>
+                    You're logged in!
+                </div>
+            }
+        >
+            <Head title="Dashboard" />
+
+            
+            
+>>>>>>> c751ca930e8ae6edbd4190fab39e797edabd05dc
 
                     {/* Ville Select */}
                     <select style={{ padding: '12px', borderRadius: '15px', border: '1px solid #ddd', minWidth: '150px' }}>

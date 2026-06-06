@@ -3,7 +3,6 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import "animate.css";
 import "@/../css/app.css";
 import "@/../css/login.css";
-import ThemeToggle from "@/Components/ThemeToggle";
 
 // ********************************************//
 import Step1 from "./Steps/Step1";
@@ -135,7 +134,6 @@ export default function Register({ villes, categories }) {
 
     return (
         <div className="auth-wrapper">
-            <ThemeToggle />
             <Head title="Inscription" />
 
             <div className="auth-card">

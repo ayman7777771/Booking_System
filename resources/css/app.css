@@ -1,38 +1,35 @@
-/* ============================================
-   🎨 CSS VARIABLES — متغيرات الهوية البصرية
-   ============================================ */
 :root {
     --brand-blue: #1904b6;
     --brand-teal: #3ed1e7;
-    --brand-gradient: linear-gradient(
-        90deg,
-        var(--brand-blue) 0%,
-        var(--brand-teal) 100%
-    );
+    --brand-gradient: linear-gradient(90deg, var(--brand-blue) 0%, var(--brand-teal) 100%);
     --brand-switch: var(--brand-blue);
-
     --bg-page: #f8f9fa;
     --bg-card: #ffffff;
     --text-main: #1f1f1f;
-    --input-border: #eee;
-
+    --text-muted-soft: rgba(31, 31, 31, 0.62);
+    --input-border: #e5e7eb;
+    --nav-bg: #ffffff;
+    --nav-border: #dce3ec;
+    --sidebar-bg: #ffffff;
+    --sidebar-width: 260px;
+    --navbar-height: 74px;
     --glass-bg: rgba(255, 255, 255, 0.95);
     --card-shadow: 0 10px 70px rgba(7, 54, 224, 0.299);
     --border-radius: 15px;
     --transition: all 0.3s ease;
 }
 
-/* ============================================
-   🌙 DARK MODE — المتغيرات الأساسية فقط
-   ============================================ */
 [data-theme="dark"] {
     --bg-page: #03060f;
-    --bg-card: #00020a;
-    --text-main: #039fb7;
-    --input-border: #1a2a5e;
+    --bg-card: #121b25;
+    --text-main: #f3fbff;
+    --text-muted-soft: rgba(243, 251, 255, 0.64);
+    --input-border: #314253;
+    --nav-bg: #111827;
+    --nav-border: #263547;
+    --sidebar-bg: #111827;
     --card-shadow: 0 10px 70px rgba(62, 209, 231, 0.15);
     --brand-switch: var(--brand-teal);
-
 }
 
 [data-theme="dark"] h2,
@@ -40,19 +37,12 @@
 [data-theme="dark"] label {
     color: var(--brand-teal) !important;
 }
-/* ============================================
-   🌍 GLOBAL — الأنماط العامة
-   ============================================ */
+
 ::selection {
     background-color: var(--brand-blue);
     color: rgb(0, 255, 251);
 }
 
-
-
-/* ============================================
-   🔒 AUTOFILL — تنسيق الملء التلقائي للمتصفح
-   ============================================ */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -65,9 +55,6 @@ input:-webkit-autofill:active {
     border-bottom: 1.5px solid var(--brand-teal) !important;
 }
 
-/* ============================================
-   🔘 BUTTON — زر الإجراء الرئيسي (مشترك)
-   ============================================ */
 .btn-primary-custom {
     background: var(--brand-gradient);
     color: white;
@@ -84,9 +71,6 @@ input:-webkit-autofill:active {
     color: rgb(6, 235, 220);
 }
 
-/* ============================================
-   🦉 APPLICATION LOGO — تنسيق شعار النظام (مشترك)
-   ============================================ */
 .nav-logo {
     height: 95px;
     width: auto;
@@ -99,9 +83,10 @@ input:-webkit-autofill:active {
 
 .nav-logo:hover {
     transform: translateY(-3px) scale(1.04);
-    filter: drop-shadow(0px 0px 8px rgba(74, 5, 236, 0.97)) ;
+    filter: drop-shadow(0px 0px 8px rgba(74, 5, 236, 0.97));
 }
-.guest-header{
+
+.guest-header {
     height: 70px;
 }
 
@@ -109,15 +94,124 @@ input:-webkit-autofill:active {
     filter: drop-shadow(0px 4px 10px rgba(110, 10, 251, 0.71)) brightness(1.3);
 }
 
+.app-navbar {
+    min-height: var(--navbar-height);
+    background: var(--nav-bg) !important;
+    border-color: var(--nav-border) !important;
+    color: var(--text-main);
+}
+
+.app-navbar .navbar-brand,
+.app-navbar .nav-link,
+.app-navbar .navbar-search,
+.app-navbar .navbar-user-name {
+    color: var(--text-main) !important;
+}
+
+.app-navbar .navbar-search {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--input-border) !important;
+}
+
+.provider-layout {
+    background: var(--bg-page);
+    color: var(--text-main);
+}
+
+.provider-layout-body {
+    min-height: calc(100vh - var(--navbar-height));
+}
+
+.provider-main {
+    min-width: 0;
+}
+
+.provider-sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    position: sticky;
+    top: var(--navbar-height);
+    align-self: flex-start;
+    height: calc(100vh - var(--navbar-height));
+    min-height: calc(100vh - var(--navbar-height));
+    overflow-y: auto;
+    background: var(--sidebar-bg);
+    border-color: var(--nav-border) !important;
+    transition: margin-left 0.25s ease, opacity 0.25s ease;
+}
+
+.provider-sidebar.is-collapsed {
+    margin-left: calc(var(--sidebar-width) * -1);
+    opacity: 0;
+}
+
+.provider-sidebar .nav-link {
+    color: var(--text-muted-soft);
+}
+
+.provider-sidebar .nav-link:hover {
+    color: var(--brand-teal);
+    background: rgba(62, 209, 231, 0.1);
+}
+
+.provider-sidebar .active-link {
+    background: var(--brand-teal) !important;
+    color: #07131a !important;
+}
+
+.provider-sidebar-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid rgba(62, 209, 231, 0.35);
+    color: var(--brand-teal);
+    background: rgba(62, 209, 231, 0.08);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-toggle-btn {
+    min-width: 42px;
+    height: 36px;
+    border: 1px solid rgba(62, 209, 231, 0.35);
+    border-radius: 999px;
+    background: rgba(62, 209, 231, 0.08);
+    color: var(--text-main);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    transition: var(--transition);
+}
+
+.theme-toggle-btn:hover {
+    background: rgba(62, 209, 231, 0.18);
+    border-color: rgba(62, 209, 231, 0.75);
+    color: var(--brand-teal);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 991px) {
+    :root {
+        --sidebar-width: 230px;
+    }
+}
 
 @media (max-width: 568px) {
     .nav-logo {
         height: 4rem;
     }
+
     [data-theme="dark"] {
-    --bg-card: #00020a;
+        --bg-card: #00020a;
     }
-    .guest-header{
+
+    .guest-header {
         height: 55px;
     }
 }

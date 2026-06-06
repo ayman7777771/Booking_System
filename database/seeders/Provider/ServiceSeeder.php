@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Provider;
 
+use App\Models\Provider\Provider;
 use App\Models\Provider\Service;
 use Illuminate\Database\Seeder;
 
@@ -9,6 +10,10 @@ class ServiceSeeder extends Seeder
 {
     public function run(): void
     {
-        Service::factory(17)->create();
+        Provider::query()->each(function (Provider $provider): void {
+            Service::factory()->create([
+                'provider_id' => $provider->id,
+            ]);
+        });
     }
 }

@@ -1,11 +1,18 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
+<<<<<<< HEAD
+=======
+
+>>>>>>> c751ca930e8ae6edbd4190fab39e797edabd05dc
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Provider\Provider;
-use App\Models\Provider\Planning;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Models\Categorie;
 use App\Models\Client\Client;
+use App\Models\Provider\Planning;
+use App\Models\Provider\Provider;
+use App\Models\User;
+use App\Models\Ville;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -13,21 +20,15 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Http\Requests\Auth\RegisterRequest;
-use App\Models\Ville;
-use App\Models\Categorie;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): Response
     {
-		return Inertia::render('Auth/Register', [
-           'categories' => Categorie::orderBy('name')->get(),
-           'villes' => Ville::orderBy('name')->get(),
-    ]);
+        return Inertia::render('Auth/Register', [
+            'categories' => Categorie::orderBy('name')->get(),
+            'villes' => Ville::orderBy('name')->get(),
+        ]);
     }
 
     /**
@@ -61,13 +62,14 @@ class RegisteredUserController extends Controller
             'statut' => true,
         ]);
 
+        $provider = null;
+
         if ($data['role'] === 'provider') {
             $provider = $this->createProvider($user, $data, $mainImagePath);
             if (isset($data['working_hours'])) {
                 $this->createPlannings($provider, $data['working_hours']);
             }
-        }
-        else {
+        } else {
             Client::create([
                 'user_id' => $user->id,
                 'Avertissement' => null,
@@ -77,7 +79,16 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
         Auth::login($user);
 
-        return redirect(route('dashboard'));
+        return redirect($this->redirectPathFor($user->setRelation('provider', $provider)));
+    }
+
+    private function redirectPathFor(User $user): string
+    {
+        if ($user->role === 'provider' && $user->provider) {
+            return route('provider.profile', $user->provider);
+        }
+
+        return route('dashboard');
     }
 
     private function createProvider(User $user, array $data, ?string $mainImagePath): Provider
@@ -90,14 +101,13 @@ class RegisteredUserController extends Controller
             'main_photo' => $mainImagePath,
             'longitude' => (float) ($data['longitude']),
             'latitude' => (float) ($data['latitude']),
-            'rating' => 0,
         ]);
     }
 
     private function createPlannings(Provider $provider, array $workingHours): void
     {
-       
-        $daysMap = [
+
+        $days = [
             'lun' => 'Lun',
             'mar' => 'Mar',
             'mer' => 'Mer',
@@ -107,11 +117,11 @@ class RegisteredUserController extends Controller
             'dim' => 'Dim',
         ];
 
-        foreach ($daysMap as $key => $dayName) {
-            if (!empty($workingHours[$key])) {
+        foreach ($days as $key => $d) {
+            if (! empty($workingHours[$key])) {
                 Planning::create([
                     'provider_id' => $provider->id,
-                    'day' => $dayName,
+                    'day' => $d,
                     'time' => $workingHours[$key],
                 ]);
             }

@@ -42,7 +42,6 @@ export default function Welcome({ auth, flash, query }) {
             <Head title="Booking System - Accueil" />
 
             <div className="landing-container">
-                {/* ── NAVBAR ── */}
                 <header className="nav-bar">
                     <div className="logo-section">
                         <ApplicationLogo className="nav-logo" />{" "}

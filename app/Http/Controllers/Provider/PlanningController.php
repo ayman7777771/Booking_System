@@ -3,43 +3,74 @@
 namespace App\Http\Controllers\Provider;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Provider\PlanningRequest;
 use App\Models\Provider\Planning;
-use Illuminate\Http\Request;
 
 class PlanningController extends Controller
 {
-    public function index()
+    public function store(PlanningRequest $request)
     {
-        $plannings = Planning::with('provider')->get();
-        return response()->json($plannings);
+        // $this->authorize('create', Planning::class);
+        $provider = auth()->user()->provider;
+        $workingHours = $request->validated('working_hours');
+
+        Planning::where('provider_id', $provider->id)->delete();
+
+        $days = [
+            'lun' => 'Lun',
+            'mar' => 'Mar',
+            'mer' => 'Mer',
+            'jeu' => 'Jeu',
+            'ven' => 'Ven',
+            'sam' => 'Sam',
+            'dim' => 'Dim',
+        ];
+
+        foreach ($days as $key => $d) {
+            if (! empty($workingHours[$key])) {
+                Planning::create([
+                    'provider_id' => $provider->id,
+                    'day' => $d,
+                    'time' => $workingHours[$key],
+                ]);
+            }
+        }
+
+        return back()->with('success', 'Planning updated successfully.');
     }
 
-    public function store(Request $request)
+    public function update(PlanningRequest $request, Planning $planning)
     {
-        $planning = Planning::create($request->validated());
-        return response()->json($planning, 201);
-    }
+        // $this->authorize('update', $planning);
+        $provider = auth()->user()->provider;
+        Planning::where('provider_id', $provider->id)->delete();
+        $days = [
+            'lun' => 'Lun',
+            'mar' => 'Mar',
+            'mer' => 'Mer',
+            'jeu' => 'Jeu',
+            'ven' => 'Ven',
+            'sam' => 'Sam',
+            'dim' => 'Dim',
+        ];
+        foreach ($days as $key => $d) {
+            if (! empty($request->working_hours[$key])) {
+                Planning::create([
+                    'provider_id' => $provider->id,
+                    'day' => $d,
+                    'time' => $request->working_hours[$key],
+                ]);
+            }
+        }
 
-    public function show(Planning $planning)
-    {
-        return response()->json($planning->load('provider'));
-    }
-
-    public function update(Request $request, Planning $planning)
-    {
-        $planning->update($request->validated());
-        return response()->json($planning);
+        return back()->with('success', 'Planning updated successfully.');
     }
 
     public function destroy(Planning $planning)
     {
+        $this->authorize('delete', $planning);
         $planning->delete();
-        return response()->json(['message' => 'Planning deleted']);
-    }
 
-    public function byProvider($providerId)
-    {
-        $plannings = Planning::where('provider_id', $providerId)->get();
-        return response()->json($plannings);
+        return back();
     }
 }

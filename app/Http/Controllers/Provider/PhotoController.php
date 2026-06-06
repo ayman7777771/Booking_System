@@ -4,42 +4,38 @@ namespace App\Http\Controllers\Provider;
 
 use App\Http\Controllers\Controller;
 use App\Models\Provider\Photo;
+use App\Models\Provider\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PhotoController extends Controller
 {
-    public function index()
+    public function store(Request $request, Service $service)
     {
-        $photos = Photo::with('provider')->get();
-        return response()->json($photos);
-    }
+        abort_if($service->provider_id !== $request->user()?->provider?->id, 403);
 
-    public function store(Request $request)
-    {
-        $photo = Photo::create($request->validated());
-        return response()->json($photo, 201);
-    }
+        $request->validate([
+            'photos' => ['required', 'array', 'min:1'],
+            'photos.*' => ['image', 'max:5120'],
+        ]);
+        foreach ($request->file('photos') as $image) {
+            $path = $image->store('services/photos', 'public');
+            Photo::create([
+                'service_id' => $service->id,
+                'path' => $path,
+            ]);
+        }
 
-    public function show(Photo $photo)
-    {
-        return response()->json($photo->load('provider'));
-    }
-
-    public function update(Request $request, Photo $photo)
-    {
-        $photo->update($request->validated());
-        return response()->json($photo);
+        return back()->with('success', 'Photos uploaded successfully');
     }
 
     public function destroy(Photo $photo)
     {
-        $photo->delete();
-        return response()->json(['message' => 'Photo deleted']);
-    }
+        abort_if($photo->service?->provider_id !== request()->user()?->provider?->id, 403);
 
-    public function byProvider($providerId)
-    {
-        $photos = Photo::where('provider_id', $providerId)->get();
-        return response()->json($photos);
+        Storage::disk('public')->delete($photo->path);
+        $photo->delete();
+
+        return back()->with('success', 'Photo deleted successfully.');
     }
 }
