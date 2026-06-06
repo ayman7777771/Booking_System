@@ -293,6 +293,10 @@
     overflow-y: auto;
 }
 
+.dashboard-gallery-item-wrapper {
+    position: relative;
+}
+
 .dashboard-gallery-item {
     position: relative;
     aspect-ratio: 1;
@@ -305,13 +309,39 @@
     border-radius: 7px;
 }
 
-.dashboard-gallery-item .btn {
+.photo-delete-btn {
     position: absolute;
-    top: 5px;
-    right: 5px;
-    width: 28px;
-    height: 28px;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
     padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 6px;
+    background: #ef4444;
+    color: white;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.photo-delete-btn:hover:not(:disabled) {
+    background: #dc2626;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.photo-delete-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.dashboard-gallery-item-wrapper:hover .photo-delete-btn {
+    opacity: 1;
 }
 
 .dashboard-empty-gallery {
