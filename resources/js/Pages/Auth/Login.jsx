@@ -2,7 +2,6 @@ import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import "@/../../resources/css/app.css";
 import "@/../../resources/css/login.css";
-import ThemeToggle from "@/Components/ThemeToggle";
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset, clearErrors } =
@@ -30,7 +29,6 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <GuestLayout>
-            <ThemeToggle />
             <Head title="Connexion" />
 
             <div className="auth-wrapper">

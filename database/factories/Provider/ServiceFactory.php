@@ -28,7 +28,7 @@ class ServiceFactory extends Factory
         return [
             'provider_id' => Provider::inRandomOrder()->first()?->id,
 
-            'nom' => $this->faker->randomElement($serviceNames),
+            'name' => $this->faker->randomElement($serviceNames),
 
             'prix' => $this->faker->numberBetween(100, 1000),
 

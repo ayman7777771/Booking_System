@@ -10,25 +10,32 @@ use Illuminate\Support\Facades\Storage;
 
 class PhotoController extends Controller
 {
-  public function store(Request $request, Service $service)
-{
-    $request->validate([
-        'photos' => ['required', 'array', 'min:1'],
-        'photos.*' => ['image', 'max:5120'],
-    ]);
-    foreach ($request->file('photos') as $image) {
-        $path = $image->store('services/photos', 'public');
-        Photo::create([
-            'service_id' => $service->id,
-            'path' => $path,
+    public function store(Request $request, Service $service)
+    {
+        abort_if($service->provider_id !== $request->user()?->provider?->id, 403);
+
+        $request->validate([
+            'photos' => ['required', 'array', 'min:1'],
+            'photos.*' => ['image', 'max:5120'],
         ]);
+        foreach ($request->file('photos') as $image) {
+            $path = $image->store('services/photos', 'public');
+            Photo::create([
+                'service_id' => $service->id,
+                'path' => $path,
+            ]);
+        }
+
+        return back()->with('success', 'Photos uploaded successfully');
     }
-    return back();
-}
-  public function destroy(Photo $photo)
-{
-    Storage::disk('public')->delete($photo->path);
-    $photo->delete();
-    return back();
-}
+
+    public function destroy(Photo $photo)
+    {
+        abort_if($photo->service?->provider_id !== request()->user()?->provider?->id, 403);
+
+        Storage::disk('public')->delete($photo->path);
+        $photo->delete();
+
+        return back()->with('success', 'Photo deleted successfully.');
+    }
 }

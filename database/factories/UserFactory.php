@@ -2,12 +2,15 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use App\Models\Ville;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
@@ -23,12 +26,15 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-     return [
+        $storedProfileImages = Storage::disk('public')->files('profiles');
+
+        return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'tel' => fake()->phoneNumber(),
             'password' => Hash::make('password'),
-            'ville_id' => \App\Models\Ville::inRandomOrder()->first()?->id,            'photoProfile' => fake()->imageUrl(200, 200, 'people'),
+            'ville_id' => Ville::inRandomOrder()->first()?->id,
+            'photoProfile' => fake()->randomElement($storedProfileImages ?: [null]),
             'role' => fake()->randomElement(['client', 'provider']),
             'statut' => true,
             'email_verified_at' => now(),

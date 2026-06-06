@@ -13,70 +13,11 @@ export default function Map({
     const containerRef = useRef(null);
     const markerRef = useRef(null);
 
-    const [coords, setCoords] = useState(null);
+    const [coords, setCoords] = useState(value);
     const [address, setAddress] = useState(null);
     const [gpsError, setGpsError] = useState(null);
     const [manualArea, setManualArea] = useState("");
     const [editMode, setEditMode] = useState(false);
-
-    //  هنا كيتم انشاء الخريطة
-    useEffect(() => {
-        if (mapRef.current) return;
-
-        mapRef.current = new maplibregl.Map({
-            container: containerRef.current,
-            style: "https://styles.trailsta.sh/osm-liberty.json",
-            center: value || [-6.85, 33.97],
-            zoom: 11,
-        });
-
-        if (mode !== "view") {
-            mapRef.current.on("click", async (e) => {
-                const coords = [e.lngLat.lng, e.lngLat.lat];
-
-                setCoords(coords);
-                onChange?.(coords);
-                const address = await getAddress(coords);
-                setAddress(address);
-            });
-        }
-
-        return () => mapRef.current?.remove();
-    }, []);
-
-    //  الدالة لي كاتحدث ال📌
-    const setMarker = (coords) => {
-        if (markerRef.current) markerRef.current.remove();
-
-        markerRef.current = new maplibregl.Marker()
-            .setLngLat(coords)
-            .addTo(mapRef.current);
-    };
-
-    //  هذا هو الجزء لي كيحرك الخريطة مع تغر coords
-    useEffect(() => {
-        if (!mapRef.current || !value) return;
-
-        //📌
-        setMarker(value);
-        mapRef.current.flyTo({ center: value, zoom: 15 });
-    }, [value]);
-
-    /* GPS */
-    const locateMe = () => {
-        navigator.geolocation.getCurrentPosition(
-            async (pos) => {
-                const coords = [pos.coords.longitude, pos.coords.latitude];
-                setCoords(coords);
-                onChange?.(coords);
-                const address = await getAddress(coords);
-                setAddress(address);
-            },
-            () => {
-                setGpsError("Impossible de récupérer votre position");
-            },
-        );
-    };
 
     const getAddress = async ([lon, lat]) => {
         const { data } = await axios.get(
@@ -88,7 +29,73 @@ export default function Map({
                 },
             },
         );
+
         return data.address;
+    };
+
+    const setMarker = (nextCoords) => {
+        if (markerRef.current) {
+            markerRef.current.remove();
+        }
+
+        markerRef.current = new maplibregl.Marker()
+            .setLngLat(nextCoords)
+            .addTo(mapRef.current);
+    };
+
+    useEffect(() => {
+        if (mapRef.current) {
+            return;
+        }
+
+        mapRef.current = new maplibregl.Map({
+            container: containerRef.current,
+            style: "https://styles.trailsta.sh/osm-liberty.json",
+            center: value || [-6.85, 33.97],
+            zoom: value ? 14 : 11,
+        });
+
+        if (mode !== "view") {
+            mapRef.current.on("click", async (event) => {
+                const nextCoords = [event.lngLat.lng, event.lngLat.lat];
+
+                setCoords(nextCoords);
+                setMarker(nextCoords);
+                onChange?.(nextCoords);
+                setAddress(await getAddress(nextCoords));
+            });
+        }
+
+        return () => mapRef.current?.remove();
+    }, []);
+
+    useEffect(() => {
+        if (!mapRef.current || !value) {
+            return;
+        }
+
+        setCoords(value);
+        setMarker(value);
+        mapRef.current.flyTo({ center: value, zoom: 15 });
+    }, [value]);
+
+    const locateMe = () => {
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const nextCoords = [
+                    position.coords.longitude,
+                    position.coords.latitude,
+                ];
+
+                setCoords(nextCoords);
+                setMarker(nextCoords);
+                onChange?.(nextCoords);
+                setAddress(await getAddress(nextCoords));
+            },
+            () => {
+                setGpsError("Impossible de recuperer votre position");
+            },
+        );
     };
 
     return (
@@ -106,12 +113,8 @@ export default function Map({
                 </div>
             ) : coords ? (
                 <div className="small text-muted mt-2 text-center">
-                    📍 {coords[0].toFixed(6)} , {coords[1].toFixed(6)} <br />
-                    🏙️ {address?.city || "—"} ,{" "}
-                    {(manualArea || "").trim() || address?.suburb || "—"} ,{" "}
-                    {address?.road || "—"}
-                    {/* EDIT MODE */}
-                    {mode === "picker" && (
+                    {coords[0].toFixed(6)} , {coords[1].toFixed(6)}
+                    {mode === "picker" && address && (
                         <div className="mt-2">
                             {editMode ? (
                                 <div className="d-flex gap-2 mt-2">
@@ -120,46 +123,49 @@ export default function Map({
                                         placeholder="Corriger le quartier"
                                         className="form-control mt-2 custom-input text-success"
                                         value={manualArea}
-                                        onChange={(e) =>
-                                            setManualArea(e.target.value)
+                                        onChange={(event) =>
+                                            setManualArea(event.target.value)
                                         }
                                     />
                                     <button
                                         className="btn mt-2"
+                                        type="button"
                                         onClick={() => setEditMode(false)}
                                     >
-                                        ✏
+                                        Modifier
                                     </button>
                                 </div>
                             ) : (
-                                <span
-                                    style={{ cursor: "pointer" }}
+                                <button
+                                    className="btn btn-link btn-sm"
+                                    type="button"
                                     onClick={() => {
                                         setManualArea(address?.suburb || "");
                                         setEditMode(true);
                                     }}
                                 >
-                                    {manualArea ||
+                                    {(manualArea || "").trim() ||
                                         address?.suburb ||
-                                        "Entrez la zone ou le quartier"}
-                                     (✏️)
-                                </span>
+                                        "Entrer la zone"}
+                                </button>
                             )}
                         </div>
                     )}
                 </div>
             ) : (
                 <div className="small text-muted mt-2 text-center">
-                    Aucune position sélectionnée.
+                    Aucune position selectionnee.
                 </div>
             )}
-            <button
-                type="button"
-                onClick={locateMe}
-                className="btn btn-outline-primary w-100 "
-            >
-                📍 Ma position actuelle
-            </button>
+            {mode !== "view" && (
+                <button
+                    type="button"
+                    onClick={locateMe}
+                    className="btn btn-outline-primary w-100"
+                >
+                    Ma position actuelle
+                </button>
+            )}
         </div>
     );
 }

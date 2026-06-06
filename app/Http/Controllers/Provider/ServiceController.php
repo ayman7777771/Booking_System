@@ -3,29 +3,14 @@
 namespace App\Http\Controllers\Provider;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use App\Models\Provider\Service;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Provider\ServiceRequest;
+use App\Models\Provider\Service;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
-
 
 class ServiceController extends Controller
 {
     use AuthorizesRequests;
-    public function index()
-    {
-        $provider = Auth::user()->provider;
-
-        $services = Service::where('provider_id', $provider->id)
-            ->latest()
-            ->get();
-
-        return Inertia::render('Provider/Profile', [
-            'services' => $services,
-        ]);
-    }
 
     public function create()
     {
@@ -34,21 +19,23 @@ class ServiceController extends Controller
 
     public function store(ServiceRequest $request)
     {
+        $this->authorize('create', Service::class);
+
         Service::create([
-             'provider_id' => auth()->user()->provider->id,
-            ...$request->all(),
+            'provider_id' => auth()->user()->provider->id,
+            ...$request->validated(),
         ]);
 
-        return redirect()->route('provider.services.index');
+        return back()->with('success', 'Service added successfully.');
     }
 
     public function update(ServiceRequest $request, Service $service)
     {
         $this->authorize('update', $service);
 
-        $service->update($request->all());
+        $service->update($request->validated());
 
-        return back();
+        return back()->with('success', 'Service updated successfully.');
     }
 
     public function destroy(Service $service)
@@ -57,7 +44,6 @@ class ServiceController extends Controller
 
         $service->delete();
 
-        return back();
+        return back()->with('success', 'Service deleted successfully.');
     }
 }
- 

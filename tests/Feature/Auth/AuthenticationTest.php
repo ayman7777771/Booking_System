@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Categorie;
+use App\Models\Provider\Provider;
 use App\Models\User;
 
 test('login screen can be rendered', function () {
@@ -17,7 +19,24 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('dashboard'));
+});
+
+test('providers are redirected to their public profile after login', function () {
+    $category = Categorie::create(['name' => 'Consultation']);
+    $user = User::factory()->create(['role' => 'provider']);
+    $provider = Provider::factory()
+        ->for($user)
+        ->for($category, 'categorie')
+        ->create();
+
+    $response = $this->post('/login', [
+        'email' => $user->email,
+        'password' => 'password',
+    ]);
+
+    $this->assertAuthenticated();
+    $response->assertRedirect(route('provider.profile', $provider));
 });
 
 test('users can not authenticate with invalid password', function () {

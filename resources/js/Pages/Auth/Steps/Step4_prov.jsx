@@ -7,7 +7,6 @@ const Step4 = ({
 }) => {
     return (
         <div className="animate__animated animate__fadeIn">
-            {/* Main Image */}
                 <h5 className="text-center mb-4">Image Principale</h5>
             <div className="mb-3">
                 <label htmlFor="main-image"
