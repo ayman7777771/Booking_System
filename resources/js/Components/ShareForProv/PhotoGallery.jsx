@@ -1,5 +1,5 @@
 import { Plus, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { router } from "@inertiajs/react";
 
 const photoUrl = (path) => {
@@ -24,6 +24,17 @@ export default function PhotoGallery({
 }) {
     const champFichierRef = useRef(null);
     const [deletingPhotoId, setDeletingPhotoId] = useState(null);
+    const [selectedFiles, setSelectedFiles] = useState([]);
+
+    const previewUrls = useMemo(() => {
+        return selectedFiles.map(file => URL.createObjectURL(file));
+    }, [selectedFiles]);
+
+    const handleFileSelect = (event) => {
+        const files = Array.from(event.target.files || []);
+        setSelectedFiles(files);
+        onFilesChange?.(files);
+    };
 
     const handleDeletePhoto = (photo) => {
         setDeletingPhotoId(photo.id);
@@ -39,29 +50,44 @@ export default function PhotoGallery({
         });
     };
 
+    const handleUpload = () => {
+        onUpload?.();
+        setSelectedFiles([]);
+        previewUrls.forEach(url => URL.revokeObjectURL(url));
+    };
+
     return (
         <div>
             <div className="dashboard-gallery">
-                {photos.length ? (
-                    photos.map((photo) => (
-                        <div key={photo.id} className="dashboard-gallery-item-wrapper">
-                            <div className="dashboard-gallery-item">
-                                <img src={photoUrl(photo.path)} alt="Galerie" />
-                                {isEdit && (
-                                    <button
-                                        className="photo-delete-btn"
-                                        type="button"
-                                        onClick={() => handleDeletePhoto(photo)}
-                                        disabled={deletingPhotoId === photo.id}
-                                        title="Supprimer la photo"
-                                        aria-label="Supprimer la photo"
-                                    >
-                                        <X size={16} />
-                                    </button>
-                                )}
+                {photos.length || selectedFiles.length ? (
+                    <>
+                        {photos.map((photo) => (
+                            <div key={photo.id} className="dashboard-gallery-item-wrapper">
+                                <div className="dashboard-gallery-item">
+                                    <img src={photoUrl(photo.path)} alt="Galerie" />
+                                    {isEdit && (
+                                        <button
+                                            className="photo-delete-btn"
+                                            type="button"
+                                            onClick={() => handleDeletePhoto(photo)}
+                                            disabled={deletingPhotoId === photo.id}
+                                            title="Supprimer la photo"
+                                            aria-label="Supprimer la photo"
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    ))
+                        ))}
+                        {selectedFiles.map((file, idx) => (
+                            <div key={`preview-${idx}`} className="dashboard-gallery-item-wrapper">
+                                <div className="dashboard-gallery-item" style={{ opacity: 0.7 }}>
+                                    <img src={previewUrls[idx]} alt="Aperçu" />
+                                </div>
+                            </div>
+                        ))}
+                    </>
                 ) : (
                     <div className="dashboard-empty-gallery">Aucune photo</div>
                 )}
@@ -82,15 +108,15 @@ export default function PhotoGallery({
                             type="file"
                             accept="image/*"
                             multiple
-                            onChange={(event) => onFilesChange?.(Array.from(event.target.files))}
+                            onChange={handleFileSelect}
                         />
                     </div>
-                    {showUploadButton && (
+                    {showUploadButton && selectedFiles.length > 0 && (
                         <div className="col-12">
                             <button
                                 className="btn btn-info w-100"
                                 type="button"
-                                onClick={onUpload}
+                                onClick={handleUpload}
                                 disabled={processing}
                             >
                                 <Plus size={15} /> Ajouter des photos
