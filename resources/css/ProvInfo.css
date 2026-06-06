@@ -1,12 +1,21 @@
 .profile-card-dark {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+}
+
+[data-theme="dark"] .profile-card-dark {
     background-color: #111827 !important;
     border: 1px solid #1f2937 !important;
 }
 
 .cover-wrapper {
     height: 220px;
-    background-color: #1f2937;
+    background-color: #f3f4f6;
     position: relative;
+}
+
+[data-theme="dark"] .cover-wrapper {
+    background-color: #1f2937;
 }
 
 .cover-img {
@@ -24,8 +33,12 @@
     width: 130px;
     height: 130px;
     object-fit: cover;
-    border: 4px solid #111827 !important;
+    border: 4px solid #ffffff !important;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .avatar-img {
+    border: 4px solid #111827 !important;
 }
 
 .badge-verified {
@@ -34,6 +47,10 @@
     end: 5px;
     background-color: #0ea5e9;
     padding: 6px;
+    border: 2px solid #ffffff;
+}
+
+[data-theme="dark"] .badge-verified {
     border: 2px solid #111827;
 }
 
