@@ -1,10 +1,8 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
-import Navbar from '@/Components/Navbar';
-import Sidebar from '@/Components/Sidebar';
+import NavBar from '@/Layouts/NavBar';
+import ClientSidebar from '@/Layouts/ClientSidebar';
 
 export default function AuthenticatedLayout({ auth, children }) {
-    // 1. Nidam l-layli (Dark Mode) - k-i-tḥakkem f l-class 'dark' f l-HTML
     const [isDarkMode, setIsDarkMode] = useState(
         localStorage.getItem('theme') === 'dark' || 
         (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
@@ -28,28 +26,29 @@ export default function AuthenticatedLayout({ auth, children }) {
     return (
         <div style={{ 
             minHeight: '100vh', 
-            backgroundColor: 'var(--bg-page)', 
-            transition: 'background-color 0.3s ease' 
+            backgroundColor: isDarkMode ? '#0f172a' : '#f8fafc', 
+            transition: 'background-color 0.3s ease'
         }}>
-            {/* Navbar: k-i-akhod l-user mn auth w l-functions dyal dark/sidebar  */}
-            <Navbar 
-                user={auth.user} 
-                toggleDarkMode={toggleDarkMode} 
-                isDarkMode={isDarkMode} 
+            {/* Navbar */}
+            <NavBar 
+                auth={auth}
+                isDarkMode={isDarkMode}
+                toggleDarkMode={toggleDarkMode}
                 toggleSidebar={toggleSidebar}
             />
 
             <div style={{ display: 'flex', position: 'relative' }}>
-                {/* Sidebar: k-i-ban fach k-t-cliqui 3la l-menu burger  */}
-                <Sidebar 
+                {/* Sidebar للـ Client */}
+                <ClientSidebar 
                     isOpen={isSidebarOpen} 
-                    onClose={() => setIsSidebarOpen(false)} 
+                    onClose={() => setIsSidebarOpen(false)}
+                    isDarkMode={isDarkMode}
                 />
 
-                {/* Main Content: fin k-it-render 'Discover.jsx' */}
+                {/* Main Content */}
                 <main style={{ 
                     flex: 1, 
-                    padding: '20px',
+                    padding: '30px 20px',
                     width: '100%',
                     boxSizing: 'border-box'
                 }}>
@@ -57,96 +56,19 @@ export default function AuthenticatedLayout({ auth, children }) {
                 </main>
             </div>
             
-            {/* Style l-khalfia l-ghadi iban f l-clipping (kima f s-sora) */}
+            {/* Backdrop عند فتح Sidebar */}
             {isSidebarOpen && (
                 <div 
                     onClick={() => setIsSidebarOpen(false)}
                     style={{
                         position: 'fixed',
                         inset: 0,
-                        backgroundColor: 'rgba(0,0,0,0.2)',
+                        backgroundColor: 'rgba(0,0,0,0.3)',
                         backdropFilter: 'blur(4px)',
                         zIndex: 45
                     }}
                 />
             )}
-=======
-// import Navbar from "@/Components/Navbar";
-
-// export default function AuthenticatedLayout({ header, children, footer }) {
-//     return (
-//         <div className="app-layout">
-
-//             <Navbar />
-
-//             {header && (
-//                 <header className="page-header">
-//                     {header}
-//                 </header>
-//             )}
-
-//             <main className="page-content">
-//                 {children}
-//             </main>
-//              {footer && (
-//                 <footer className="page-footer">
-//                     {footer}
-//                 </footer>
-//             )}
-//         </div>
-//     );
-// }
-
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import { Link, usePage } from '@inertiajs/react';
-
-export default function AuthenticatedLayout({ header, children }) {
-    const user = usePage().props.auth.user;
-
-    return (
-        <div>
-            <nav>
-                <div>
-                    <div>
-                        <Link href="/">
-                            {/* <ApplicationLogo /> */}
-                            Home
-                        </Link>
-                    </div>
-
-                    <div>
-                        <Link href={route('dashboard')}>
-                            Dashboard
-                        </Link> {/* active={route().current('dashboard')} */}
-                    </div>
-                </div>
-
-                <div>
-                    {user.name}
-
-                    <Link href={route('profile.edit')}>
-                        Profile
-                    </Link>
-                    <Link
-                        href={route('logout')}
-                        method="post"
-                        as="button"
-                    >
-                        Log Out
-                    </Link>
-                </div>
-            </nav>
-
-            {header && (
-                <header>
-                    <div>
-                        {header}
-                    </div>
-                </header>
-            )}
-
-            <main>{children}</main>
->>>>>>> c751ca930e8ae6edbd4190fab39e797edabd05dc
         </div>
     );
 }
