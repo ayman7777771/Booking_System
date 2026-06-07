@@ -2,22 +2,15 @@ import React from 'react';
 import { Link } from '@inertiajs/react';
 import { Star, MapPin, Eye } from 'lucide-react';
 
-export default function ProviderCard({ service }) {
-    // احصل على الصور من البيانات
-    const mainImg = service?.Mainphoto ? `/storage/${service.Mainphoto}` : '/images/default-service.jpg';
-    const profileImg = service?.provider?.utilisateur?.photoProfile 
-        ? `/storage/${service.provider.utilisateur.photoProfile}` 
-        : '/images/default-avatar.jpg';
+export default function ProviderCard({ provider }) {
+    const mainImg = provider?.main_photo ? `/storage/${provider.main_photo}` : '/images/default-service.jpg';
+    const profileImg = provider?.user?.photoProfile ? `/storage/${provider.user.photoProfile}` : '/images/default-avatar.jpg';
 
-    // حساب عدد النجوم
-    const rating = service?.moyen_note ? Math.round(service.moyen_note) : 0;
-    const ratingValue = service?.moyen_note ? Number(service.moyen_note).toFixed(1) : '0.0';
-
-    // الألوان حسب الـ Dark Mode
-    const isDark = document.documentElement.classList.contains('dark');
+    const isDark = typeof window !== 'undefined' && document.documentElement.classList.contains('dark');
     const bgCard = isDark ? '#1e293b' : '#ffffff';
     const textMain = isDark ? '#f8fafc' : '#1e293b';
     const textMuted = isDark ? '#94a3b8' : '#64748b';
+    const borderColor = isDark ? '#334155' : '#e2e8f0';
 
     return (
         <div style={{
@@ -26,7 +19,8 @@ export default function ProviderCard({ service }) {
             overflow: 'hidden',
             boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
             transition: 'all 0.3s ease',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            border: `1px solid ${borderColor}`
         }}
         onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-8px)';
@@ -37,16 +31,14 @@ export default function ProviderCard({ service }) {
             e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
         }}>
             
-            {/* Service Image */}
             <div style={{
                 height: '180px',
                 overflow: 'hidden',
-                backgroundColor: '#f0f0f0',
-                position: 'relative'
+                backgroundColor: '#f0f0f0'
             }}>
                 <img
                     src={mainImg}
-                    alt={service?.nom || 'Service'}
+                    alt={provider?.service}
                     style={{
                         width: '100%',
                         height: '100%',
@@ -56,12 +48,7 @@ export default function ProviderCard({ service }) {
                 />
             </div>
 
-            {/* Content */}
-            <div style={{
-                padding: '20px',
-                textAlign: 'center'
-            }}>
-                {/* Provider Avatar */}
+            <div style={{ padding: '20px', textAlign: 'center' }}>
                 <div style={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -72,7 +59,7 @@ export default function ProviderCard({ service }) {
                 }}>
                     <img
                         src={profileImg}
-                        alt={service?.provider?.utilisateur?.name}
+                        alt={provider?.user?.name}
                         style={{
                             width: '80px',
                             height: '80px',
@@ -85,7 +72,6 @@ export default function ProviderCard({ service }) {
                     />
                 </div>
 
-                {/* Service Name */}
                 <h3 style={{
                     margin: '0 0 8px 0',
                     color: textMain,
@@ -95,20 +81,18 @@ export default function ProviderCard({ service }) {
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap'
                 }}>
-                    {service?.nom || 'خدمة'}
+                    {provider?.service || 'Service'}
                 </h3>
 
-                {/* Provider Name */}
                 <p style={{
                     margin: '0 0 10px 0',
                     color: textMuted,
                     fontSize: '13px',
                     fontWeight: '500'
                 }}>
-                    {service?.provider?.utilisateur?.name || 'مقدم خدمة'}
+                    {provider?.user?.name || 'Prestataire'}
                 </p>
 
-                {/* Rating */}
                 <div style={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -122,9 +106,8 @@ export default function ProviderCard({ service }) {
                                 key={num}
                                 size={14}
                                 style={{
-                                    fill: num <= rating ? '#FFD700' : '#E0E0E0',
-                                    color: num <= rating ? '#FFD700' : '#E0E0E0',
-                                    transition: 'all 0.2s ease'
+                                    fill: num <= 4 ? '#FFD700' : '#E0E0E0',
+                                    color: num <= 4 ? '#FFD700' : '#E0E0E0'
                                 }}
                             />
                         ))}
@@ -134,11 +117,10 @@ export default function ProviderCard({ service }) {
                         color: textMuted,
                         fontWeight: '500'
                     }}>
-                        ({ratingValue})
+                        (4.5)
                     </span>
                 </div>
 
-                {/* Location */}
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -149,25 +131,11 @@ export default function ProviderCard({ service }) {
                     fontSize: '12px'
                 }}>
                     <MapPin size={14} />
-                    <span>{service?.provider?.utilisateur?.ville || 'الموقع'}</span>
+                    <span>{provider?.user?.ville?.nom || 'Localisation'}</span>
                 </div>
 
-                {/* Price */}
-                <div style={{
-                    background: 'linear-gradient(135deg, #00BCD4 0%, #0097A7 100%)',
-                    color: 'white',
-                    padding: '8px 12px',
-                    borderRadius: '10px',
-                    marginBottom: '15px',
-                    fontWeight: 'bold',
-                    fontSize: '14px'
-                }}>
-                    {service?.prix ? `${service.prix} DH` : 'غير محدد'}
-                </div>
-
-                {/* Button */}
                 <Link
-                    href={`/provider/${service?.provider?.id}/services`}
+                    href={route('provider.profile', provider.id)}
                     style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -186,16 +154,16 @@ export default function ProviderCard({ service }) {
                         transition: 'all 0.3s ease'
                     }}
                     onMouseEnter={(e) => {
-                        e.target.style.transform = 'scale(1.02)';
-                        e.target.style.boxShadow = '0 6px 16px rgba(0, 188, 212, 0.3)';
+                        e.currentTarget.style.transform = 'scale(1.02)';
+                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 188, 212, 0.3)';
                     }}
                     onMouseLeave={(e) => {
-                        e.target.style.transform = 'scale(1)';
-                        e.target.style.boxShadow = 'none';
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.boxShadow = 'none';
                     }}
                 >
                     <Eye size={14} />
-                    عرض الملف الشخصي
+                    Voir le Profil
                 </Link>
             </div>
         </div>

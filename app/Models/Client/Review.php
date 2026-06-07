@@ -4,6 +4,7 @@ namespace App\Models\Client;
 
 use App\Models\Provider\Provider;
 use App\Models\Provider\Service;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -33,7 +34,8 @@ class Review extends Model
     {
         return $this->belongsTo(Service::class);
     }
-    public function service() {
-    return $this->belongsTo(\App\Models\Provider\Service::class);
+    public function user()
+{
+    return $this->belongsTo(User::class);
 }
 }

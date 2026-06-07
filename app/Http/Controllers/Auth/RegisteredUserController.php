@@ -1,10 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-<<<<<<< HEAD
-=======
-
->>>>>>> c751ca930e8ae6edbd4190fab39e797edabd05dc
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\Categorie;

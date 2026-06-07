@@ -9,17 +9,18 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// 1. Home Page / Welcome
+// 1. Home Page
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
     ]);
 });
 
 // 2. Dashboard - يعرض جميع الخدمات والمقدمين (للـ Client)
+Route::get('/provider/profile/{provider}', [ProviderController::class, 'profile']);
+
+// 2. Dashboard - يعرض جميع الخدمات للـ Client
 Route::get('/dashboard', [ProviderController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
@@ -54,4 +55,5 @@ Route::middleware(['auth'])
 Route::get('/provider/{id}/services', [ServiceController::class, 'byProvider'])->name('services.byProvider');
 Route::get('/provider/profile/{provider}', [ProviderController::class, 'profile'])->name('provider.profile');
 
+require __DIR__.'/auth.php';
 require __DIR__.'/auth.php';

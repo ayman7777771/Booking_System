@@ -16,26 +16,44 @@ use Inertia\Inertia;
 class ProviderController extends Controller
 {
     use AuthorizesRequests;
-    public function index(Request $request)
-    {
-        $search = $request->search;
-        $providers = Provider::with(['user.ville', 'category'])
-            ->when($search, fn ($q) => $q->where(function ($q) use ($search) {
-                $q->where('service', 'like', "%{$search}%")
-                    ->orWhereHas('user', fn ($uq) => $uq->where('name', 'like', "%{$search}%")
-                    );
-            })
-            )
-            ->latest()
-            ->paginate(15);
+public function index(Request $request)
+{
+    $search = $request->search;
+    $category = $request->category;
+    $ville = $request->ville;
 
-        return Inertia::render('Dashboard', [
-            'providers' => $providers,
-            'filters' => compact('search'),
-            'categories' => Categorie::orderBy('name')->get(),
-            'villes' => Ville::orderBy('name')->get(),
-        ]);
-    }
+    $providers = Provider::with(['user.ville', 'categorie'])
+        ->when($search, function ($q) use ($search) {
+            $q->where(function ($q) use ($search) {
+                $q->where('service', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($uq) use ($search) {
+                      $uq->where('name', 'like', "%{$search}%");
+                  });
+            });
+        })
+        ->when($category, function ($q) use ($category) {
+            $q->where('categorie_id', $category);
+        })
+        ->when($ville, function ($q) use ($ville) {
+            $q->whereHas('user', function ($uq) use ($ville) {
+                $uq->where('ville_id', $ville);
+            });
+        })
+        ->latest()
+        ->paginate(15)
+        ->withQueryString();
+
+    return Inertia::render('Dashboard', [
+        'providers' => $providers,
+        'filters' => [
+            'search' => $search,
+            'category' => $category,
+            'ville' => $ville,
+        ],
+        'categories' => Categorie::orderBy('name')->get(),
+        'villes' => Ville::orderBy('name')->get(),
+    ]);
+}
 
     private function getProviderData(Provider $provider)
     {

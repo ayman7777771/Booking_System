@@ -9,12 +9,9 @@ use App\Models\Provider\Service;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-<<<<<<< HEAD
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-=======
 use Illuminate\Validation\ValidationException;
->>>>>>> c751ca930e8ae6edbd4190fab39e797edabd05dc
 
 class ReservationController extends Controller
 {
@@ -30,7 +27,6 @@ class ReservationController extends Controller
 
     public function index()
     {
-<<<<<<< HEAD
         try {
         $user = Auth::user();
 
@@ -63,16 +59,13 @@ class ReservationController extends Controller
         // Hād l-blasa hya li ghadi t-mna3 500 error u t-biyen lik r-risala d l-mouchkil s-afiya f l-wjeh!
         dd("L-Mouchkil jayi mn had l-stire: " . $e->getMessage());
     }
-=======
         $reservations = Reservation::with('client', 'service')->get();
 
         return response()->json($reservations);
->>>>>>> c751ca930e8ae6edbd4190fab39e797edabd05dc
     }
 
     public function store(Request $request): RedirectResponse
     {
-<<<<<<< HEAD
         $request->validate([
             'service_id' => 'required|exists:services,id',
             'date_reservation' => 'required|date|after:today',
@@ -87,7 +80,6 @@ class ReservationController extends Controller
         ]);
 
         return back()->with('success', 'Réservation dert b-najaḥ!');
-=======
         $data = $request->validate([
             'service_id' => ['required', 'integer', 'exists:services,id'],
             'date' => ['required', 'date', 'after_or_equal:today'],
@@ -131,7 +123,6 @@ class ReservationController extends Controller
         ]);
 
         return back()->with('success', 'Reservation request sent.');
->>>>>>> c751ca930e8ae6edbd4190fab39e797edabd05dc
     }
     
 
