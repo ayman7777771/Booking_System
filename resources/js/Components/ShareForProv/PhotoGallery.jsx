@@ -1,24 +1,13 @@
+import { useRef, useState, useMemo, useEffect } from "react";
 import { Plus, X } from "lucide-react";
-import { useRef, useState, useMemo } from "react";
 import { router } from "@inertiajs/react";
-
-const photoUrl = (path) => {
-    if (!path) {
-        return null;
-    }
-
-    return path.startsWith("http") || path.startsWith("/") ? path : `/storage/${path}`;
-};
-
 export default function PhotoGallery({
     photos = [],
-    services = [],
     isEdit = false,
-    serviceId = "",
-    onServiceChange,
     onFilesChange,
     onUpload,
     onRemove,
+    onClearPhoto,
     processing = false,
     showUploadButton = true,
 }) {
@@ -30,10 +19,28 @@ export default function PhotoGallery({
         return selectedFiles.map(file => URL.createObjectURL(file));
     }, [selectedFiles]);
 
+    useEffect(() => {
+        if (onClearPhoto !== undefined) {
+            setSelectedFiles([]);
+            previewUrls.forEach(url => URL.revokeObjectURL(url));
+        }
+    }, [onClearPhoto]);
+    const photoUrl = (path) => {
+    if (!path) return null;
+    return path.startsWith("http") || path.startsWith("/") ? path : `/storage/${path}`;
+};
+
     const handleFileSelect = (event) => {
         const files = Array.from(event.target.files || []);
         setSelectedFiles(files);
         onFilesChange?.(files);
+    };
+
+    const handleRemovePreview = (idx) => {
+        const updated = selectedFiles.filter((_, i) => i !== idx);
+        URL.revokeObjectURL(previewUrls[idx]);
+        setSelectedFiles(updated);
+        onFilesChange?.(updated);
     };
 
     const handleDeletePhoto = (photo) => {
@@ -84,6 +91,17 @@ export default function PhotoGallery({
                             <div key={`preview-${idx}`} className="dashboard-gallery-item-wrapper">
                                 <div className="dashboard-gallery-item" style={{ opacity: 0.7 }}>
                                     <img src={previewUrls[idx]} alt="Aperçu" />
+                                    {isEdit && (
+                                        <button
+                                            className="photo-delete-btn"
+                                            type="button"
+                                            onClick={() => handleRemovePreview(idx)}
+                                            title="Supprimer l'aperçu"
+                                            aria-label="Supprimer l'aperçu"
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         ))}

@@ -1,4 +1,5 @@
 import { router } from "@inertiajs/react";
+import { format } from "date-fns";
 
 export default function ReservationRequests({ reservations = [] }) {
     const answer = (reservation, action) => {
@@ -6,6 +7,7 @@ export default function ReservationRequests({ reservations = [] }) {
             preserveScroll: true,
         });
     };
+    const formatDate = (date) => format(new Date(date), "dd/MM/yyyy");
 
     return (
         <div className="text-white">
@@ -14,7 +16,7 @@ export default function ReservationRequests({ reservations = [] }) {
                 <p className="text-muted">Aucune demande.</p>
             ) : reservations.map((reservation) => (
                 <div key={reservation.id} className="d-flex justify-content-between align-items-center border-bottom border-secondary py-2">
-                    <span>{reservation.client?.user?.name} - {reservation.service?.name} - {reservation.date} {reservation.heure}</span>
+                    <span>{reservation.client?.user?.name} - {reservation.service?.name} - {formatDate(reservation.date)} {reservation.heure}</span>
                     {reservation.statut === "en_attente" ? (
                         <span className="d-flex gap-2">
                             <button className="btn btn-sm btn-success" onClick={() => answer(reservation, "accept")}>Accepter</button>

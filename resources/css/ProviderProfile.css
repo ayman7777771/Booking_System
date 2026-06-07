@@ -1,5 +1,7 @@
 .provider-profile-page {
-    background: var(--bg-page);
+    background-image:
+        radial-gradient(circle at top left, rgba(62, 209, 231, 0.14), transparent 32%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.04), transparent 42%);
     color: var(--text-main);
 }
 
