@@ -39,6 +39,32 @@ test('providers are redirected to their public profile after login', function ()
     $response->assertRedirect(route('provider.profile', $provider));
 });
 
+test('admins are redirected to the admin dashboard after login', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $response = $this->post('/login', [
+        'email' => $admin->email,
+        'password' => 'password',
+    ]);
+
+    $this->assertAuthenticated();
+    $response->assertRedirect(route('admin.dashboard'));
+});
+
+test('admins are redirected to the admin dashboard even with a client dashboard intended url', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $response = $this
+        ->withSession(['url.intended' => route('dashboard')])
+        ->post('/login', [
+            'email' => $admin->email,
+            'password' => 'password',
+        ]);
+
+    $this->assertAuthenticated();
+    $response->assertRedirect(route('admin.dashboard'));
+});
+
 test('users can not authenticate with invalid password', function () {
     $user = User::factory()->create();
 

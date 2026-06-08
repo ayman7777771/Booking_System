@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { router, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import ProvInfo from "@/Components/ShareForProv/ProvInfo";
 import ProviderLayout from "@/Layouts/ProviderLayout";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import About from "@/Components/ShareForProv/About";
 import Map from "@/Components/Map";
 import PhotoGallery from "@/Components/ShareForProv/PhotoGallery";
@@ -38,7 +39,7 @@ export default function Profile({ provider }) {
         : null;
 
     const openReservation = (service) => {
-        if (!auth.user) {
+        if (!auth?.user) {
             setToast({
                 type: "warning",
                 message: "Connectez-vous pour reserver.",
@@ -75,8 +76,10 @@ export default function Profile({ provider }) {
         });
     };
 
+    const Layout = auth?.user?.role === "provider" ? ProviderLayout : AuthenticatedLayout;
+
     return (
-        <ProviderLayout>
+        <Layout auth={auth}>
             <div className="provider-profile-page min-vh-100 p-4">
                 <div className="card profile-card-dark rounded-3 overflow-hidden shadow mb-4 text-white">
                     <div className="container" style={{ maxWidth: "1000px" }}>
@@ -105,6 +108,16 @@ export default function Profile({ provider }) {
                             plannings={provider.plannings}
                             readOnly
                         />
+                        {auth?.user?.role === "client" && (
+                            <div className="mt-4 text-end">
+                                <Link
+                                    href={route("messages.index", provider.user.id)}
+                                    className="btn btn-info fw-semibold"
+                                >
+                                    Envoyer un message
+                                </Link>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <BookingModal
@@ -115,6 +128,6 @@ export default function Profile({ provider }) {
                 />
                 <ToastMessage toast={toast} onClose={() => setToast(null)} />
             </div>
-        </ProviderLayout>
+        </Layout>
     );
 }

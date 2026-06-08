@@ -53,8 +53,6 @@ export default function Dashboard({ auth, stats }) {
 
 // Quick Styles dynamic d les cards bach i-bdlo s-style m3a dynamic structure
 const cardStyle = (color) => ({
-    backgroundColor: 'var(--card-bg, currentColor)',
-    background: 'inherit',
     border: '1px solid rgba(0,0,0,0.05)',
     borderRadius: '16px',
     padding: '24px',

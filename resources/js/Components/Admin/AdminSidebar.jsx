@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, route } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { LayoutDashboard, Users, Settings, LogOut } from 'lucide-react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 

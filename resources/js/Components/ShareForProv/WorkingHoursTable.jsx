@@ -1,6 +1,6 @@
 import React from "react";
-
-const DAYS = [
+import { CheckCircle } from "lucide-react";
+const Jours = [
     { id: "lun", name: "Lun" },
     { id: "mar", name: "Mar" },
     { id: "mer", name: "Mer" },
@@ -15,15 +15,14 @@ const HOURS = Array.from({ length: 19 }, (_, index) => {
 
     return `${hour.toString().padStart(2, "0")}:00`;
 });
-
+// دالة كاتحول من  { day: "Lun", time: ["09:00", "10:00"] } ل  lun: ["09:00", "10:00"],
 const toWorkingHours = (plannings = []) =>
     plannings.reduce((hours, planning) => {
-        const day = DAYS.find((item) => item.name === planning.day);
+        const day = Jours.find((item) => item.name === planning.day);
 
         if (!day) {
             return hours;
         }
-
         return {
             ...hours,
             [day.id]: planning.time || [],
@@ -42,27 +41,27 @@ export default function WorkingHoursTable({
 }) {
     const selectedHours = value || toWorkingHours(plannings);
     const hasHours = Object.values(selectedHours).some((hours) => hours?.length);
-    const enabledDayIds = enabledDays || DAYS.map((day) => day.id);
+    const enabledDayId = enabledDays || Jours.map((d) => d.id);
 
     const toggleSlot = (day, hour) => {
         if (readOnly || !onChange) {
             return;
         }
 
-        const currentDayHours = selectedHours[day] || [];
-        const nextDayHours = currentDayHours.includes(hour)
-            ? currentDayHours.filter((slot) => slot !== hour)
-            : [...currentDayHours, hour].sort();
+        const currentD_H = selectedHours[day] || [];
+        const nextD_H = currentD_H.includes(hour)
+            ? currentD_H.filter((h) => h !== hour)
+            : [...currentD_H, hour].sort();
 
         onChange({
             ...selectedHours,
-            [day]: nextDayHours,
+            [day]: nextD_H,
         });
     };
 
     const handleSlotClick = (day, hour, isSelected) => {
         if (onSlotSelect) {
-            if (isSelected && enabledDayIds.includes(day.id)) {
+            if (isSelected && enabledDayId.includes(day.id)) {
                 onSlotSelect({ day: day.id, dayName: day.name, hour });
             }
 
@@ -94,13 +93,13 @@ export default function WorkingHoursTable({
                         >
                             Heure
                         </th>
-                        {DAYS.map((day) => (
+                        {Jours.map((day) => (
                             <th
                                 key={day.id}
                                 className="small py-2"
                                 style={{
                                     width: "60px",
-                                    backgroundColor: "#e5eef6",
+                                    backgroundColor: "#dbebfa",
                                 }}
                             >
                                 {day.name}
@@ -117,17 +116,16 @@ export default function WorkingHoursTable({
                             >
                                 {hour}
                             </td>
-                            {DAYS.map((day) => {
+                            {Jours.map((day) => {
                                 const isSelected = selectedHours[
                                     day.id
                                 ]?.includes(hour);
-                                const isEnabled = enabledDayIds.includes(day.id);
-                                const isChosen =
-                                    selectedSlot?.day === day.id &&
-                                    selectedSlot?.hour === hour;
+
+                                const isEnable = enabledDayId.includes(day.id);
+                                const isChosen =selectedSlot?.day === day.id && selectedSlot?.hour === hour;
                                 const canClick =
                                     (!readOnly && onChange) ||
-                                    (onSlotSelect && isSelected && isEnabled);
+                                    (onSlotSelect && isSelected && isEnable);
 
                                 return (
                                     <td
@@ -150,13 +148,12 @@ export default function WorkingHoursTable({
                                                   ? "#3ed1e7"
                                                   : "",
                                             opacity:
-                                                onSlotSelect && !isEnabled ? 0.35 : 1,
+                                                onSlotSelect && !isEnable ? 0.35 : 1,
                                             transition: "0.3s",
                                         }}
                                     >
                                         {(isSelected || isChosen) && (
-                                            <i className="bi bi-check-lg text-white"></i>
-                                        )}
+                                        <CheckCircle size={16} color="white" />                                        )}
                                     </td>
                                 );
                             })}

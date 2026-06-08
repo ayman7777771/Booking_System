@@ -3,17 +3,18 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\Ville;
 use App\Models\Client\Client;
 use App\Models\Client\Review;
 use App\Models\Provider\Provider;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -21,16 +22,17 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-protected $fillable = [
-    'name',
-    'email',
-    'tel',
-    'password',
-    'ville_id',
-    'photoProfile',
-    'role',
-    'statut',
-];
+    protected $fillable = [
+        'name',
+        'email',
+        'tel',
+        'password',
+        'ville_id',
+        'photoProfile',
+        'role',
+        'statut',
+    ];
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -55,19 +57,32 @@ protected $fillable = [
     }
 
     public function ville()
-{
-    return $this->belongsTo(Ville::class);
-}
-public function client()
-{
-    return $this->hasOne(Client::class);
-}
-public function provider()
-{
-    return $this->hasOne(Provider::class);
-}
-public function reviews()
-{
-    return $this->hasMany(Review::class);
-}
+    {
+        return $this->belongsTo(Ville::class);
+    }
+
+    public function client()
+    {
+        return $this->hasOne(Client::class);
+    }
+
+    public function provider()
+    {
+        return $this->hasOne(Provider::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function sentMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
 }

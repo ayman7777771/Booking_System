@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\Categorie;
@@ -80,6 +81,10 @@ class RegisteredUserController extends Controller
 
     private function redirectPathFor(User $user): string
     {
+        if ($user->role === 'admin') {
+            return route('admin.dashboard');
+        }
+
         if ($user->role === 'provider' && $user->provider) {
             return route('provider.profile', $user->provider);
         }

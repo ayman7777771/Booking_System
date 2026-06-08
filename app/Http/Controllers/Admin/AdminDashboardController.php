@@ -3,60 +3,58 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Client\Reservation;
+use App\Models\Provider\Service;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
-use Illuminate\Http\Request;
+use Inertia\Response;
 
 class AdminDashboardController extends Controller
 {
-    /**
-     * 📊 1. Wajha d l-Dashboard Global (Statistiques)
-     */
-    public function index()
+    public function index(): Response
     {
-        // Iḥṣāʾiyāt dynamicment mn l-base de données
-        $stats = [
-            'total_clients'   => User::where('role', 'client')->count(),
-            'total_providers' => User::where('role', 'provider')->count(),
-            
-            // Éléments supplémentaires (T-qder t-decommentihom mlli t-creeryi les Tables dyalhom)
-            'total_services'  => 0, // dynamic: \App\Models\Service::count()
-            'total_bookings'  => 0, // dynamic: \App\Models\Booking::count()
-        ];
-
         return Inertia::render('Admin/Dashboard', [
-            'stats' => $stats
+            'stats' => [
+                'total_clients' => User::where('role', 'client')->count(),
+                'total_providers' => User::where('role', 'provider')->count(),
+                'total_services' => Service::count(),
+                'total_bookings' => Reservation::count(),
+            ],
         ]);
     }
 
-    /**
-     * 👥 2. Wajha d Gestion des Utilisateurs (Tableau)
-     */
-    public function usersIndex()
+    public function usersIndex(): Response
     {
-        // Jbna ga3 l-utilisateurs m-stfin mn j-jdid l l-qdim
-        $users = User::orderBy('created_at', 'desc')->get();
-
         return Inertia::render('Admin/Users/Index', [
-            'users' => $users
+            'users' => User::query()
+                ->select(['id', 'name', 'email', 'photoProfile', 'role', 'statut', 'created_at'])
+                ->latest()
+                ->get(),
         ]);
     }
 
-    /**
-     * 🗑️ 3. Suppression d l-Utilisateur (حذف الحساب)
-     */
-    public function destroyUser($id)
+    public function toggleUserStatus(User $user): RedirectResponse
     {
-        $user = User::findOrFail($id);
-
-        // Sécurité: L-Admin mkiy-qdersch i-supprimer rāsu awla Admin akhor
         if ($user->role === 'admin') {
-            return redirect()->back()->with('error', 'Action interdite: Impossible de supprimer un administrateur!');
+            return back()->with('error', 'Impossible de modifier le statut d un administrateur.');
         }
 
-        // Suppression d l-compte nichan
+        $user->update([
+            'statut' => ! $user->statut,
+        ]);
+
+        return back()->with('success', 'Statut utilisateur mis a jour.');
+    }
+
+    public function destroyUser(User $user): RedirectResponse
+    {
+        if ($user->role === 'admin') {
+            return back()->with('error', 'Action interdite: impossible de supprimer un administrateur.');
+        }
+
         $user->delete();
 
-        return redirect()->back()->with('success', 'Utilisateur supprimé avec succès.');
+        return back()->with('success', 'Utilisateur supprime avec succes.');
     }
 }

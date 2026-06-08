@@ -11,9 +11,10 @@ export default function PhotoGallery({
     processing = false,
     showUploadButton = true,
 }) {
-    const champFichierRef = useRef(null);
-    const [deletingPhotoId, setDeletingPhotoId] = useState(null);
+    const FichierRef = useRef(null);
+    const [deletePhotoId, setDeletePhotoId] = useState(null);
     const [selectedFiles, setSelectedFiles] = useState([]);
+    const [openphoto, setOpenphoto] = useState(null);
 
     const previewUrls = useMemo(() => {
         return selectedFiles.map(file => URL.createObjectURL(file));
@@ -30,29 +31,29 @@ export default function PhotoGallery({
     return path.startsWith("http") || path.startsWith("/") ? path : `/storage/${path}`;
 };
 
-    const handleFileSelect = (event) => {
-        const files = Array.from(event.target.files || []);
+    const handleFileSelect = (e) => {
+        const files = Array.from(e.target.files || []);
         setSelectedFiles(files);
         onFilesChange?.(files);
     };
 
-    const handleRemovePreview = (idx) => {
-        const updated = selectedFiles.filter((_, i) => i !== idx);
-        URL.revokeObjectURL(previewUrls[idx]);
+    const handleRemovePreview = (i) => {
+        const updated = selectedFiles.filter((_, i) => i !== i);
+        URL.revokeObjectURL(previewUrls[i]);
         setSelectedFiles(updated);
         onFilesChange?.(updated);
     };
 
     const handleDeletePhoto = (photo) => {
-        setDeletingPhotoId(photo.id);
+        setDeletePhotoId(photo.id);
         router.delete(route("provider.photos.destroy", photo.id), {
             preserveScroll: true,
             onSuccess: () => {
-                setDeletingPhotoId(null);
+                setDeletePhotoId(null);
                 onRemove?.(photo);
             },
             onError: () => {
-                setDeletingPhotoId(null);
+                setDeletePhotoId(null);
             },
         });
     };
@@ -71,15 +72,14 @@ export default function PhotoGallery({
                         {photos.map((photo) => (
                             <div key={photo.id} className="dashboard-gallery-item-wrapper">
                                 <div className="dashboard-gallery-item">
-                                    <img src={photoUrl(photo.path)} alt="Galerie" />
+                                    <img src={photoUrl(photo.path)}  onClick={() => setOpenphoto(photoUrl(photo.path))} style={{ cursor: "pointer" }}/>
                                     {isEdit && (
                                         <button
                                             className="photo-delete-btn"
                                             type="button"
                                             onClick={() => handleDeletePhoto(photo)}
-                                            disabled={deletingPhotoId === photo.id}
+                                            disabled={deletePhotoId === photo.id}
                                             title="Supprimer la photo"
-                                            aria-label="Supprimer la photo"
                                         >
                                             <X size={16} />
                                         </button>
@@ -87,17 +87,16 @@ export default function PhotoGallery({
                                 </div>
                             </div>
                         ))}
-                        {selectedFiles.map((file, idx) => (
-                            <div key={`preview-${idx}`} className="dashboard-gallery-item-wrapper">
+                        {selectedFiles.map((f, i) => (
+                            <div key={i} className="dashboard-gallery-item-wrapper">
                                 <div className="dashboard-gallery-item" style={{ opacity: 0.7 }}>
-                                    <img src={previewUrls[idx]} alt="Aperçu" />
+                                    <img src={previewUrls[i]}/>
                                     {isEdit && (
                                         <button
                                             className="photo-delete-btn"
                                             type="button"
-                                            onClick={() => handleRemovePreview(idx)}
-                                            title="Supprimer l'aperçu"
-                                            aria-label="Supprimer l'aperçu"
+                                            onClick={() => handleRemovePreview(i)}
+                                            title="Supprimer la photo"
                                         >
                                             <X size={16} />
                                         </button>
@@ -116,12 +115,12 @@ export default function PhotoGallery({
                         <button
                             className="dashboard-file-button"
                             type="button"
-                            onClick={() => champFichierRef.current?.click()}
+                            onClick={() => FichierRef.current?.click()}
                         >
                             <Plus size={16} /> Ajouter une photo
                         </button>
                         <input
-                            ref={champFichierRef}
+                            ref={FichierRef}
                             className="dashboard-file-input"
                             type="file"
                             accept="image/*"
@@ -143,6 +142,18 @@ export default function PhotoGallery({
                     )}
                 </div>
             )}
+            {openphoto && (
+    <div
+        onClick={() => setOpenphoto(null)}
+        style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            zIndex: 9999, cursor: "zoom-out",
+        }}
+    >
+        <img src={openphoto} style={{ maxHeight: "90vh", maxWidth: "90vw", borderRadius: "8px" }} />
+    </div>
+)}
         </div>
     );
 }

@@ -13,8 +13,6 @@ export default function ToastMessage({ toast, onClose }) {
             <div
                 className={`toast show text-bg-${toast.type || "success"} border-0`}
                 role="alert"
-                aria-live="assertive"
-                aria-atomic="true"
             >
                 <div className="d-flex">
                     <div className="toast-body">{toast.message}</div>
@@ -22,7 +20,6 @@ export default function ToastMessage({ toast, onClose }) {
                         type="button"
                         className="btn-close btn-close-white me-2 m-auto"
                         onClick={onClose}
-                        aria-label="Fermer"
                     />
                 </div>
             </div>

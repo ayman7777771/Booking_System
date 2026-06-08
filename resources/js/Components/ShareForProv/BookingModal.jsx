@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import WorkingHoursTable from "@/Components/ShareForProv/WorkingHoursTable";
 
-const DATE_DAY_IDS = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"];
+const days_id = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"];
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -10,7 +10,7 @@ const getDayId = (date) => {
         return null;
     }
 
-    return DATE_DAY_IDS[new Date(`${date}T00:00:00`).getDay()];
+    return days_id[new Date(`${date}T00:00:00`).getDay()];
 };
 
 export default function BookingModal({ service, plannings, onClose, onConfirm }) {
@@ -49,7 +49,6 @@ export default function BookingModal({ service, plannings, onClose, onConfirm })
                                 type="button"
                                 className="btn-close btn-close-white"
                                 onClick={onClose}
-                                aria-label="Fermer"
                             />
                         </div>
                         <div className="modal-body">
@@ -59,7 +58,7 @@ export default function BookingModal({ service, plannings, onClose, onConfirm })
                                 className="form-control mb-3"
                                 min={today()}
                                 value={date}
-                                onChange={(event) => setDate(event.target.value)}
+                                onChange={(e) => setDate(e.target.value)}
                             />
                             <WorkingHoursTable
                                 plannings={plannings}

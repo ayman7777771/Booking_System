@@ -19,7 +19,6 @@ export default function ThemeToggle() {
             type="button"
             onClick={toggle}
             className="theme-toggle-btn"
-            aria-label={isDark ? "Activer le mode clair" : "Activer le mode sombre"}
             title={isDark ? "Mode clair" : "Mode sombre"}
         >
             {isDark ? <Sun size={16} /> : <Moon size={16} />}

@@ -4,23 +4,23 @@ export default function About({
     isDashboard = false,
     onChange,
 }) {
-    const title = isDashboard ? "A propos" : "Description";
+    const title = isDashboard ?  "Description :":"A propos :";
 
     return (
         <div>
-            <h5 className="text-white">
+            <h5 className="text-color">
                 <strong>{title}</strong>
             </h5>
             {editable ? (
                 <textarea
-                    className="form-control dashboard-input"
-                    rows={isDashboard ? 3 : 4}
+                    className="form-control dashboard-input text-color"
+                    rows= {4}
                     value={description}
                     onChange={(event) => onChange?.(event.target.value)}
                     placeholder="Description courte..."
                 />
             ) : (
-                <p className={isDashboard ? "text-secondary" : "text-white"}>
+                <p className={isDashboard ? "text-secondary" : "text-color-p"}>
                     {description || "-"}
                 </p>
             )}

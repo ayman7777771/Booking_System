@@ -25,6 +25,20 @@
     opacity: 0.75;
 }
 
+.cover-img-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        linear-gradient(135deg, rgba(25, 4, 182, 0.9), rgba(10, 166, 189, 0.82)),
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.32), transparent 34%);
+    color: #ffffff;
+    font-size: clamp(1.3rem, 4vw, 2.8rem);
+    font-weight: 800;
+    opacity: 1;
+    text-align: center;
+}
+
 .identity-row {
     margin-top: -65px;
 }

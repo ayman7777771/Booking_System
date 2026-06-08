@@ -1,72 +1,79 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavBar from '@/Layouts/NavBar';
 import ClientSidebar from '@/Layouts/ClientSidebar';
 
-export default function AuthenticatedLayout({ auth, children }) {
-    const [isDarkMode, setIsDarkMode] = useState(
-        localStorage.getItem('theme') === 'dark' || 
-        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    );
+const prefersDarkTheme = () => {
+    if (localStorage.getItem('theme')) {
+        return localStorage.getItem('theme') === 'dark';
+    }
 
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches || false;
+};
+
+export default function AuthenticatedLayout({ auth, children }) {
+    const [isDarkMode, setIsDarkMode] = useState(prefersDarkTheme);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const isClient = Boolean(auth?.user) && auth.user.role !== 'provider';
 
     useEffect(() => {
-        if (isDarkMode) {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
+        const theme = isDarkMode ? 'dark' : 'light';
+
+        document.documentElement.classList.toggle('dark', isDarkMode);
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
     }, [isDarkMode]);
 
-    const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
-    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+    useEffect(() => {
+        const syncTheme = (event) => {
+            if (typeof event.detail?.isDark === 'boolean') {
+                setIsDarkMode(event.detail.isDark);
+
+                return;
+            }
+
+            setIsDarkMode(localStorage.getItem('theme') === 'dark');
+        };
+
+        const syncStoredTheme = () => setIsDarkMode(prefersDarkTheme());
+
+        window.addEventListener('theme-change', syncTheme);
+        window.addEventListener('storage', syncStoredTheme);
+
+        return () => {
+            window.removeEventListener('theme-change', syncTheme);
+            window.removeEventListener('storage', syncStoredTheme);
+        };
+    }, []);
+
+    const closeSidebar = () => setIsSidebarOpen(false);
 
     return (
-        <div style={{ 
-            minHeight: '100vh', 
-            backgroundColor: isDarkMode ? '#0f172a' : '#f8fafc', 
-            transition: 'background-color 0.3s ease'
-        }}>
-            {/* Navbar */}
-            <NavBar 
+        <div className="client-shell">
+            <NavBar
                 auth={auth}
-                isDarkMode={isDarkMode}
-                toggleDarkMode={toggleDarkMode}
-                toggleSidebar={toggleSidebar}
+                canToggleSidebar={isClient}
+                onToggleSidebar={() => setIsSidebarOpen((open) => !open)}
+                isSidebarOpen={isSidebarOpen}
             />
 
-            <div style={{ display: 'flex', position: 'relative' }}>
-                {/* Sidebar للـ Client */}
-                <ClientSidebar 
-                    isOpen={isSidebarOpen} 
-                    onClose={() => setIsSidebarOpen(false)}
+            <main className="client-main">
+                {children}
+            </main>
+
+            {isClient && (
+                <ClientSidebar
+                    isOpen={isSidebarOpen}
+                    onClose={closeSidebar}
                     isDarkMode={isDarkMode}
                 />
+            )}
 
-                {/* Main Content */}
-                <main style={{ 
-                    flex: 1, 
-                    padding: '30px 20px',
-                    width: '100%',
-                    boxSizing: 'border-box'
-                }}>
-                    {children}
-                </main>
-            </div>
-            
-            {/* Backdrop عند فتح Sidebar */}
             {isSidebarOpen && (
-                <div 
-                    onClick={() => setIsSidebarOpen(false)}
-                    style={{
-                        position: 'fixed',
-                        inset: 0,
-                        backgroundColor: 'rgba(0,0,0,0.3)',
-                        backdropFilter: 'blur(4px)',
-                        zIndex: 45
-                    }}
+                <button
+                    type="button"
+                    className="client-sidebar-backdrop"
+                    onClick={closeSidebar}
+                    aria-label="Fermer le menu"
                 />
             )}
         </div>

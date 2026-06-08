@@ -19,41 +19,41 @@ export default function ServiceTable({
     editingId,
     onSubmit,
     onCancel,
-    showSubmitButton = true,
+    showSubmitButton = false,
 }) {
     return (
         <div>
             {isEdit && form && (
                 <div className="row g-2 mb-3">
-                    {["name", "prix", "duration"].map((field) => (
-                        <div className="col-md" key={field}>
+                    {["name", "prix", "duration"].map((f) => (
+                        <div className="col-md" key={f}>
                             <input
                                 className="form-control dashboard-input"
-                                type={field === "name" ? "text" : "number"}
-                                min={field === "name" ? undefined : "0"}
+                                type={f === "name" ? "text" : "number"}
+                                min={f === "name" ? undefined : "0"}
                                 placeholder={
-                                    field === "name"
+                                    f === "name"
                                         ? "Service"
-                                        : field === "prix"
+                                        : f === "prix"
                                           ? "Prix"
                                           : "Duree"
                                 }
-                                value={form.data[field]}
-                                onChange={(event) =>
-                                    form.setData(field, event.target.value)
+                                value={form.data[f]}
+                                onChange={(e) =>
+                                    form.setData(f, e.target.value)
                                 }
                             />
                         </div>
                     ))}
                     <div className="col-md-auto d-flex gap-2">
-                        {showSubmitButton && (
+                        {showSubmitButton==true && (
                             <button
                                 className="btn btn-info"
                                 type="button"
                                 onClick={onSubmit}
                                 disabled={form.processing}
                             >
-                                <Save size={15} /> Enregistrer
+                                <Save size={15} />
                             </button>
                         )}
                         {editingId && (
@@ -92,19 +92,19 @@ export default function ServiceTable({
                     </thead>
                     <tbody>
                         {services.map((service) => (
-                            <tr key={service.id}>
+                            <tr key={service.id} className="text-center">
                                 <td className="fw-bold text-light">{service.name}</td>
                                 <td>{service.prix} DH</td>
                                 <td>{service.duration}</td>
                                 <td>
                                     {isEdit ? (
-                                        <div className="d-flex gap-2">
+                                        <div className="d-flex gap-2 text-center">
                                             <button
                                                 className="btn btn-sm btn-outline-info"
                                                 onClick={() => onEdit?.(service)}
                                                 type="button"
                                             >
-                                                <Pencil size={14} /> Modifier
+                                                <Pencil size={14} />
                                             </button>
                                             <button
                                                 className="btn btn-sm btn-outline-danger"

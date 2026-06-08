@@ -34,12 +34,23 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended($this->redirectPathFor($request->user()));
+        /** @var User $user */
+        $user = $request->user();
+
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return redirect()->intended($this->redirectPathFor($user));
     }
 
     private function redirectPathFor(User $user): string
     {
         $user->loadMissing('provider:id,user_id');
+
+        if ($user->role === 'admin') {
+            return route('admin.dashboard');
+        }
 
         if ($user->role === 'provider' && $user->provider) {
             return route('provider.profile', $user->provider);

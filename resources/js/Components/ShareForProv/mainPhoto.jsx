@@ -1,12 +1,12 @@
 import { Upload } from "lucide-react";
 
 export default function MainPhoto({ photo, isEdit = false }) {
-    const getStorageImage = (path) => {
+    const getStorage = (path) => {
         if (!path || path.startsWith("http")) return null;
         return `/storage/${path}`;
     };
 
-    const photoUrl = getStorageImage(photo);
+    const photoUrl = getStorage(photo);
 
     if (!isEdit) {
         return (
@@ -17,7 +17,6 @@ export default function MainPhoto({ photo, isEdit = false }) {
                 {photoUrl ? (
                     <img
                         src={photoUrl}
-                        alt="Principal"
                         className="w-100 h-100"
                         style={{ objectFit: "cover" }}
                     />

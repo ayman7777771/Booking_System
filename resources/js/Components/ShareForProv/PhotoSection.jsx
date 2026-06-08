@@ -1,5 +1,5 @@
 import { Upload } from "lucide-react";
-
+import { ImageOff } from "lucide-react";
 const photoUrl = (path) => {
     if (!path) {
         return null;
@@ -14,9 +14,9 @@ export default function PhotoSection({ provider, isEdit = false, preview, onChan
     return (
         <label className="dashboard-main-photo">
             {mainPhoto ? (
-                <img src={mainPhoto} alt="Principal" />
+                <img src={mainPhoto}/>
             ) : (
-                <span>Aucune photo</span>
+                <span><ImageOff size={40} /></span>
             )}
             {isEdit && (
                 <>

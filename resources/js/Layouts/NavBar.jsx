@@ -1,170 +1,203 @@
+import React from 'react';
 import { Link, usePage } from '@inertiajs/react';
-import { Bell, LogOut, Menu, Search, User } from 'lucide-react';
+import { Bell, LayoutDashboard, LogOut, Menu, User } from 'lucide-react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import ThemeToggle from '@/Components/ThemeToggle';
 
-export default function NavBar({ auth, isDarkMode, toggleDarkMode, toggleSidebar }) {
-    const { user } = auth;
-    const avatarPath = user?.photoProfile;
-    const avatarSrc = avatarPath && !avatarPath.startsWith('http') ? `/storage/${avatarPath}` : null;
+export default function Navbar({
+    canToggleSidebar = false,
+    onToggleSidebar,
+    isSidebarOpen = false,
+}) {
+    const { auth } = usePage().props;
+    const authUser = auth?.user;
 
-    const bgColor = isDarkMode ? '#1e293b' : '#ffffff';
-    const textColor = isDarkMode ? '#f8fafc' : '#1e293b';
-    const borderColor = isDarkMode ? '#334155' : '#e2e8f0';
+    const providerId = authUser?.provider?.id;
+    const userName = authUser?.name || 'User';
+
+    const profileHref = providerId
+        ? `/provider/profile/${providerId}`
+        : '/profile';
+
+    const dashboardHref =
+        authUser?.role === 'provider'
+            ? '/provider/Dashboard'
+            : authUser?.role === 'admin'
+                ? '/admin'
+                : '/dashboard';
+
+    const photoPath = authUser?.photoProfile;
+
+    const photoprofile = photoPath
+        ? (photoPath.startsWith('http')
+            ? photoPath
+            : `/storage/${photoPath}`)
+        : null;
 
     return (
-        <nav style={{
-            backgroundColor: bgColor,
-            borderBottom: `1px solid ${borderColor}`,
-            padding: '15px 25px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            position: 'sticky',
-            top: 0,
-            zIndex: 50,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-            transition: 'all 0.3s ease'
-        }}>
-            {/* Left Side - Logo */}
-            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
-                <ApplicationLogo />
-                <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#00BCD4' }}>
-                    Booking System
-                </span>
-            </Link>
+        <nav className="navbar navbar-expand-lg app-navbar border-bottom px-4 py-2 sticky-top shadow-sm">
+            <div className="container-fluid p-0">
 
-            {/* Center - Search (Desktop) */}
-            <div style={{
-                flex: 1,
-                maxWidth: '300px',
-                position: 'relative',
-                marginX: '30px'
-            }}>
-                <Search size={16} style={{
-                    position: 'absolute',
-                    left: '15px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: '#94a3b8'
-                }} />
-                <input
-                    type="text"
-                    placeholder="ابحث..."
-                    style={{
-                        width: '100%',
-                        padding: '10px 15px 10px 40px',
-                        borderRadius: '20px',
-                        border: `1px solid ${borderColor}`,
-                        backgroundColor: isDarkMode ? '#0f172a' : '#f1f5f9',
-                        color: textColor,
-                        fontSize: '14px'
-                    }}
-                />
-            </div>
+                {canToggleSidebar && (
+                    <button
+                        className={`provider-sidebar-toggle ${isSidebarOpen ? 'is-open' : ''} me-3`}
+                        type="button"
+                        onClick={onToggleSidebar}
+                        aria-label="Toggle sidebar"
+                    >
+                        <Menu size={18} />
+                    </button>
+                )}
 
-            {/* Right Side - Actions */}
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '20px'
-            }}>
-                {/* Theme Toggle */}
-                <button
-                    onClick={toggleDarkMode}
-                    style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontSize: '20px',
-                        padding: '5px'
-                    }}
+                <Link
+                    className="navbar-brand d-flex align-items-center gap-2 fw-bold text-info"
+                    href={authUser ? dashboardHref : '/'}
                 >
-                    {isDarkMode ? '☀️' : '🌙'}
+                    <ApplicationLogo className="mx-1" />
+                    <span>Booking System</span>
+                </Link>
+
+                <button
+                    className="navbar-toggler border-0 text-secondary"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarContent"
+                >
+                    <Menu size={20} />
                 </button>
 
-                {/* Notifications */}
-                {user && (
-                    <div style={{ position: 'relative', cursor: 'pointer' }}>
-                        <Bell size={20} style={{ color: textColor }} />
-                        <span style={{
-                            position: 'absolute',
-                            top: '-5px',
-                            right: '-5px',
-                            width: '10px',
-                            height: '10px',
-                            backgroundColor: '#ef4444',
-                            borderRadius: '50%'
-                        }} />
-                    </div>
-                )}
+                <div className="collapse navbar-collapse" id="navbarContent">
+                    <ul className="navbar-nav ms-auto align-items-lg-center gap-3">
 
-                {user ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                        {/* User Avatar & Name */}
-                        <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '10px'
-                        }}>
-                            {avatarSrc ? (
-                                <img
-                                    src={avatarSrc}
-                                    alt="Avatar"
-                                    style={{
-                                        width: '35px',
-                                        height: '35px',
-                                        borderRadius: '50%',
-                                        objectFit: 'cover',
-                                        border: `2px solid #00BCD4`
-                                    }}
-                                />
-                            ) : (
-                                <User size={20} style={{ color: textColor }} />
-                            )}
-                        </div>
+                        <li className="nav-item">
+                            <ThemeToggle />
+                        </li>
 
-                        {/* Logout */}
-                        <Link
-                            href={route('logout')}
-                            method="post"
-                            as="button"
-                            style={{
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                                padding: '5px'
-                            }}
-                        >
-                            <LogOut size={20} style={{ color: '#ef4444' }} />
-                        </Link>
+                        {authUser && (
+                            <li className="nav-item position-relative">
+                                <button className="btn btn-link text-secondary p-1 hover-text-white position-relative">
+                                    <Bell size={20} />
+                                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger p-1">
+                                        <span className="visually-hidden"></span>
+                                    </span>
+                                </button>
+                            </li>
+                        )}
 
-                        {/* Menu Toggle (Mobile) */}
-                        <button
-                            onClick={toggleSidebar}
-                            style={{
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                                padding: '5px'
-                            }}
-                        >
-                            <Menu size={20} style={{ color: textColor }} />
-                        </button>
-                    </div>
-                ) : (
-                    <Link href={route('login')} style={{
-                        padding: '8px 16px',
-                        backgroundColor: '#00BCD4',
-                        color: 'white',
-                        borderRadius: '8px',
-                        textDecoration: 'none',
-                        fontSize: '14px',
-                        fontWeight: '500'
-                    }}>
-                        دخول
-                    </Link>
-                )}
+                        {authUser && (
+                            <div
+                                className="vr d-none d-lg-block bg-secondary my-2"
+                                style={{ height: '24px' }}
+                            />
+                        )}
+
+                        {authUser ? (
+                            <li className="nav-item dropdown">
+                                <a
+                                    className="nav-link dropdown-toggle d-flex align-items-center gap-2 fw-semibold"
+                                    href="#"
+                                    id="userDropdown"
+                                    role="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                >
+                                    {photoprofile ? (
+                                        <img
+                                            src={photoprofile}
+                                            alt="User Avatar"
+                                            className="rounded-circle border border-secondary"
+                                            style={{
+                                                width: '32px',
+                                                height: '32px',
+                                                objectFit: 'cover',
+                                            }}
+                                        />
+                                    ) : (
+                                        <span
+                                            className="rounded-circle border border-secondary d-inline-flex align-items-center justify-content-center bg-secondary text-white"
+                                            style={{
+                                                width: '32px',
+                                                height: '32px',
+                                            }}
+                                        >
+                                            {userName.slice(0, 2)}
+                                        </span>
+                                    )}
+
+                                    <span className="d-none d-sm-inline small navbar-user-name">
+                                        {userName}
+                                    </span>
+                                </a>
+
+                                <ul
+                                    className="dropdown-menu dropdown-menu-end dropdown-menu-dark border-secondary shadow-lg mt-2"
+                                    aria-labelledby="userDropdown"
+                                >
+                                    <li>
+                                        <Link
+                                            className="dropdown-menu-item dropdown-item d-flex align-items-center gap-2 py-2 small"
+                                            href={profileHref}
+                                        >
+                                            <User size={14} className="text-info" />
+                                            Mon Profil
+                                        </Link>
+                                    </li>
+
+                                    <li>
+                                        <Link
+                                            className="dropdown-menu-item dropdown-item d-flex align-items-center gap-2 py-2 small"
+                                            href={dashboardHref}
+                                        >
+                                            <LayoutDashboard
+                                                size={14}
+                                                className="text-success"
+                                            />
+                                            Dashboard
+                                        </Link>
+                                    </li>
+
+                                    <li>
+                                        <hr className="dropdown-divider border-secondary" />
+                                    </li>
+
+                                    <li>
+                                        <Link
+                                            className="dropdown-item d-flex align-items-center gap-2 py-2 text-danger small"
+                                            href="/logout"
+                                            method="post"
+                                            as="button"
+                                            style={{
+                                                width: '100%',
+                                                textAlign: 'left',
+                                                background: 'none',
+                                                border: 'none',
+                                            }}
+                                        >
+                                            <LogOut size={14} />
+                                            Deconnexion
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </li>
+                        ) : (
+                            <li className="nav-item d-flex align-items-center gap-2">
+                                <Link
+                                    className="btn btn-outline-info btn-sm"
+                                    href="/login"
+                                >
+                                    Connexion
+                                </Link>
+
+                                <Link
+                                    className="btn btn-info btn-sm text-dark fw-semibold"
+                                    href="/register"
+                                >
+                                    Inscription
+                                </Link>
+                            </li>
+                        )}
+                    </ul>
+                </div>
             </div>
         </nav>
     );

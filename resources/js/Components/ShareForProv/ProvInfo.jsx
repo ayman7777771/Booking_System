@@ -46,7 +46,7 @@ export default function ProvInfo({ provider }) {
                     </div>
 
                     <div className="col mt-3 mt-md-0">
-                        <h3 className="mb-0 fw-bold text-light">
+                        <h3 className="mb-0 fw-bold prov-name">
                             {provider.user?.name || 'Nom non disponible'}
                         </h3>
 

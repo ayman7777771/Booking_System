@@ -46,6 +46,13 @@ export default function Sidebar({ isOpen = true }) {
                     </Link>
                 </li>
 
+                <li className="nav-item">
+                    <Link href="/messages" className={`nav-link d-flex align-items-center gap-3 py-2.5 px-3 rounded-3 transition-all ${isActive('/messages')}`}>
+                        <MessageSquare size={18} />
+                        <span>Messages</span>
+                    </Link>
+                </li>
+
             </ul>
 
             <div className="border-top border-secondary pt-3 mt-3">

@@ -34,7 +34,9 @@ class UserFactory extends Factory
             'tel' => fake()->phoneNumber(),
             'password' => Hash::make('password'),
             'ville_id' => Ville::inRandomOrder()->first()?->id,
-            'photoProfile' => fake()->randomElement($storedProfileImages ?: [null]),
+            'photoProfile' => count($storedProfileImages) > 2
+                ? fake()->randomElement($storedProfileImages)
+                : 'https://i.pravatar.cc/240?u='.Str::uuid(),
             'role' => fake()->randomElement(['client', 'provider']),
             'statut' => true,
             'email_verified_at' => now(),

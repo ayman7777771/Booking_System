@@ -8,52 +8,54 @@ use App\Models\Categorie;
 use App\Models\Client\Reservation;
 use App\Models\Provider\Provider;
 use App\Models\Ville;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
 
 class ProviderController extends Controller
 {
     use AuthorizesRequests;
-public function index(Request $request)
-{
-    $search = $request->search;
-    $category = $request->category;
-    $ville = $request->ville;
 
-    $providers = Provider::with(['user.ville', 'categorie'])
-        ->when($search, function ($q) use ($search) {
-            $q->where(function ($q) use ($search) {
+    public function index(Request $request)
+    {
+        if ($request->user()?->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        $search = $request->input('search', '');
+        $villeFilter = $request->input('ville', '');
+        $categoryId = $request->input('category', '');
+
+        $query = Provider::with(['user.ville', 'categorie', 'services.photos']);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('service', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($uq) use ($search) {
-                      $uq->where('name', 'like', "%{$search}%");
-                  });
+                    ->orWhereHas('user', fn ($uq) => $uq->where('name', 'like', "%{$search}%"));
             });
-        })
-        ->when($category, function ($q) use ($category) {
-            $q->where('categorie_id', $category);
-        })
-        ->when($ville, function ($q) use ($ville) {
-            $q->whereHas('user', function ($uq) use ($ville) {
-                $uq->where('ville_id', $ville);
-            });
-        })
-        ->latest()
-        ->paginate(15)
-        ->withQueryString();
+        }
+        if ($villeFilter) {
+            $query->whereHas('user', fn ($q) => $q->where('ville_id', $villeFilter));
+        }
 
-    return Inertia::render('Dashboard', [
-        'providers' => $providers,
-        'filters' => [
-            'search' => $search,
-            'category' => $category,
-            'ville' => $ville,
-        ],
-        'categories' => Categorie::orderBy('name')->get(),
-        'villes' => Ville::orderBy('name')->get(),
-    ]);
-}
+        if ($categoryId) {
+            $query->where('categorie_id', $categoryId);
+        }
+
+        $providers = $query->latest()->paginate(12)->withQueryString();
+
+        return Inertia::render('Dashboard', [
+            'providers' => $providers,
+            'filters' => [
+                'search' => $search,
+                'ville' => $villeFilter,
+                'category' => $categoryId,
+            ],
+            'categories' => Categorie::orderBy('name')->get(),
+            'villes' => Ville::orderBy('name')->get(),
+        ]);
+    }
 
     private function getProviderData(Provider $provider)
     {

@@ -4,27 +4,35 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use \App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Message extends Model
 {
     use HasFactory;
 
-   protected $fillable = [
-    'contenu',
-    'envoyeLe',
-    'lu',
-    'sender_id',
-    'receiver_id',
-];
+    protected $fillable = [
+        'contenu',
+        'envoyeLe',
+        'lu',
+        'sender_id',
+        'receiver_id',
+    ];
 
-    public function sender()
+    protected function casts(): array
+    {
+        return [
+            'envoyeLe' => 'datetime',
+            'lu' => 'boolean',
+        ];
+    }
+
+    public function sender(): BelongsTo
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
 
-    public function receiver()
+    public function receiver(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class, 'receiver_id');
+        return $this->belongsTo(User::class, 'receiver_id');
     }
 }
