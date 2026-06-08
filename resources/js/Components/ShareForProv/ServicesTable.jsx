@@ -69,7 +69,7 @@ export default function ServiceTable({
                 </div>
             )}
             <div className="table-responsive">
-                <table className="table table-dark table-hover align-middle">
+                <table className="table table-dark table-hover align-middle text-center">
                     <thead>
                         <tr>
                             <th>
@@ -119,8 +119,9 @@ export default function ServiceTable({
                                             className="btn btn-sm btn-success"
                                             onClick={() => onReserve(service)}
                                             type="button"
-                                        >
-                                            <CalendarCheck size={14} /> Reserver
+                                            title="Reserver ce service"
+                                        > 
+                                            <CalendarCheck size={14} />
                                         </button>
                                     ) : null}
                                 </td>

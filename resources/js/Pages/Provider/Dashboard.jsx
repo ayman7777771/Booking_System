@@ -268,10 +268,11 @@ export default function Dashboard({ provider, categories = [], reservations = []
                             <h2 className="panel-title">Gestion des Services Detailles</h2>
                             <ServiceTable
                                 services={services}
+                                onSubmit={enregistrerService}
                                 isEdit
                                 form={service}
                                 editingId={editingService}
-                                showSubmitButton={false}
+                                showSubmitButton={true}
                                 onCancel={() => {
                                     setEditingService(null);
                                     service.setData({ name: "", prix: "", duration: "" });
