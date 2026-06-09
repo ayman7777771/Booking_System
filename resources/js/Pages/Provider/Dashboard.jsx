@@ -68,9 +68,7 @@ export default function Dashboard({ provider, categories = [], reservations = []
         if (!provider) {
             return;
         }
-
         const heures = toHours(provider.plannings);
-
         profile.setData(donneesProfil(provider));
         setPlanning(heures);
         agenda.setData("working_hours", heures);

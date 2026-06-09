@@ -142,7 +142,7 @@ class ReservationController extends Controller
     {
         $provider = $request->user()?->provider;
 
-        abort_if(! $provider, 403);
+        abort_if(!$provider, 403);
 
         abort_if(! $reservation->service || $reservation->service->provider_id !== $provider->id, 403);
     }

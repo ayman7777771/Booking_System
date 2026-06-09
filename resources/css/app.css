@@ -944,7 +944,14 @@ input:-webkit-autofill:active {
     transform: translateY(-50%);
     pointer-events: none;
 }
-
+.dropdown-menu {
+    position: absolute !important;
+    background: rgb(60, 83, 83) !important;
+    color:black
+}
+[data-theme="dark"] .dropdown-menu {
+    background: black !important;
+}
 .booking-input-icon .booking-control {
     padding-left: 42px;
 }

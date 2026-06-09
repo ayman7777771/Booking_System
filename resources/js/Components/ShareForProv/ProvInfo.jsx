@@ -61,15 +61,6 @@ export default function ProvInfo({ provider }) {
                     </div>
 
                     <div className="col-md-auto text-md-end mt-3 mt-md-0">
-                        <div className="d-flex align-items-center gap-1 justify-content-md-end mb-2">
-                            <Star size={16} className="text-warning fill-warning" />
-                            <span className="fw-bold fs-5 mb-0 text-warning">
-                                {provider.rating || '4.8'}
-                            </span>
-                            <span className="text-secondary small">
-                                ({provider.reviews_count || '0'} avis)
-                            </span>
-                        </div>
 
                         <div className="small text-secondary d-flex flex-column align-items-md-end gap-1">
                             <span className="d-flex align-items-center gap-1">

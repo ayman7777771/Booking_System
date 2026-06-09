@@ -1,13 +1,13 @@
 import React from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Users, Wrench, Briefcase, Calendar } from 'lucide-react';
+import ProviderCard from '@/Components/ProviderCard';
 
-export default function Dashboard({ auth, stats }) {
+export default function Dashboard({ auth, stats, providers = [] }) {
     return (
         <AdminLayout auth={auth} title="Admin Dashboard">
             <div style={{ marginBottom: '25px' }}>
                 <h2 style={{ margin: 0, fontSize: '24px', fontWeight: '700' }}>Tableau de Bord Global</h2>
-                <p style={{ margin: '5px 0 0 0', color: '#64748b', fontSize: '14px' }}>Mraḥba bik a khoya Amine. Hna iḥṣāʾiyāt l-khedma kamla.</p>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
@@ -45,6 +45,17 @@ export default function Dashboard({ auth, stats }) {
                 </div>
 
             </div>
+
+            {providers.length > 0 && (
+                <div style={{ marginTop: '40px' }}>
+                    <h3 style={{ margin: '0 0 20px 0', fontSize: '18px', fontWeight: '700' }}>Serveces:</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '24px' }}>
+                        {providers.map((provider) => (
+                            <ProviderCard key={provider.id} provider={provider} />
+                        ))}
+                    </div>
+                </div>
+            )}
         </AdminLayout>
     );
 }

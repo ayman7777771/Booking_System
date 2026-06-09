@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Client\Reservation;
+use App\Models\Provider\Provider;
 use App\Models\Provider\Service;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -21,6 +22,10 @@ class AdminDashboardController extends Controller
                 'total_services' => Service::count(),
                 'total_bookings' => Reservation::count(),
             ],
+            'providers' => Provider::with(['user', 'services.photos', 'categorie'])
+                ->latest()
+                ->limit(12)
+                ->get(),
         ]);
     }
 

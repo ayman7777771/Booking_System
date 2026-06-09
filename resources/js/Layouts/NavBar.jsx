@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link, usePage } from '@inertiajs/react';
-import { Bell, LayoutDashboard, LogOut, Menu, User } from 'lucide-react';
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import ThemeToggle from '@/Components/ThemeToggle';
+import React from "react";
+import { Link, usePage } from "@inertiajs/react";
+import { Bell, LayoutDashboard, LogOut, Menu, User } from "lucide-react";
+import ApplicationLogo from "@/Components/ApplicationLogo";
+import ThemeToggle from "@/Components/ThemeToggle";
 
 export default function Navbar({
     canToggleSidebar = false,
@@ -13,34 +13,33 @@ export default function Navbar({
     const authUser = auth?.user;
 
     const providerId = authUser?.provider?.id;
-    const userName = authUser?.name || 'User';
+    const userName = authUser?.name || "User";
 
     const profileHref = providerId
         ? `/provider/profile/${providerId}`
-        : '/profile';
+        : "/profile";
 
     const dashboardHref =
-        authUser?.role === 'provider'
-            ? '/provider/Dashboard'
-            : authUser?.role === 'admin'
-                ? '/admin'
-                : '/dashboard';
+        authUser?.role === "provider"
+            ? "/provider/Dashboard"
+            : authUser?.role === "admin"
+              ? "/admin"
+              : "/dashboard";
 
     const photoPath = authUser?.photoProfile;
 
     const photoprofile = photoPath
-        ? (photoPath.startsWith('http')
+        ? photoPath.startsWith("http")
             ? photoPath
-            : `/storage/${photoPath}`)
+            : `/storage/${photoPath}`
         : null;
 
     return (
         <nav className="navbar app-navbar border-bottom px-3 px-md-4 py-2 sticky-top shadow-sm">
             <div className="container-fluid p-0 flex-nowrap gap-2">
-
                 {canToggleSidebar && (
                     <button
-                        className={`provider-sidebar-toggle ${isSidebarOpen ? 'is-open' : ''}`}
+                        className={`provider-sidebar-toggle ${isSidebarOpen ? "is-open" : ""}`}
                         type="button"
                         onClick={onToggleSidebar}
                         aria-label="Toggle sidebar"
@@ -51,7 +50,7 @@ export default function Navbar({
 
                 <Link
                     className="navbar-brand d-flex align-items-center gap-2 fw-bold text-info me-auto"
-                    href={authUser ? dashboardHref : '/'}
+                    href={authUser ? dashboardHref : "/"}
                 >
                     <ApplicationLogo className="mx-1" />
                     <span>Booking System</span>
@@ -59,7 +58,6 @@ export default function Navbar({
 
                 <div className="navbar-actions">
                     <ul className="navbar-nav flex-row align-items-center gap-2 gap-sm-3">
-
                         <li className="nav-item">
                             <ThemeToggle />
                         </li>
@@ -79,7 +77,7 @@ export default function Navbar({
                             <li
                                 aria-hidden="true"
                                 className="navbar-divider d-none d-md-block"
-                                style={{ height: '24px' }}
+                                style={{ height: "24px" }}
                             />
                         )}
 
@@ -99,17 +97,17 @@ export default function Navbar({
                                             alt="User Avatar"
                                             className="rounded-circle border border-secondary"
                                             style={{
-                                                width: '32px',
-                                                height: '32px',
-                                                objectFit: 'cover',
+                                                width: "32px",
+                                                height: "32px",
+                                                objectFit: "cover",
                                             }}
                                         />
                                     ) : (
                                         <span
                                             className="rounded-circle border border-secondary d-inline-flex align-items-center justify-content-center bg-secondary text-white"
                                             style={{
-                                                width: '32px',
-                                                height: '32px',
+                                                width: "32px",
+                                                height: "32px",
                                             }}
                                         >
                                             {userName.slice(0, 2)}
@@ -124,13 +122,22 @@ export default function Navbar({
                                 <ul
                                     className="dropdown-menu dropdown-menu-end dropdown-menu-dark border-secondary shadow-lg mt-2"
                                     aria-labelledby="userDropdown"
+                                    style={{
+                                        position: "absolute",
+                                        top: "100%",
+                                        right: 0,
+                                        zIndex: 1050,
+                                    }}
                                 >
                                     <li>
                                         <Link
                                             className="dropdown-menu-item dropdown-item d-flex align-items-center gap-2 py-2 small"
                                             href={profileHref}
                                         >
-                                            <User size={14} className="text-info" />
+                                            <User
+                                                size={14}
+                                                className="text-info"
+                                            />
                                             Mon Profil
                                         </Link>
                                     </li>
@@ -159,10 +166,10 @@ export default function Navbar({
                                             method="post"
                                             as="button"
                                             style={{
-                                                width: '100%',
-                                                textAlign: 'left',
-                                                background: 'none',
-                                                border: 'none',
+                                                width: "100%",
+                                                textAlign: "left",
+                                                background: "none",
+                                                border: "none",
                                             }}
                                         >
                                             <LogOut size={14} />
