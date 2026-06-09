@@ -10,10 +10,8 @@ class ServiceSeeder extends Seeder
 {
     public function run(): void
     {
-        // Kan-jibou ga3 l-providers li 3ndna f l-base de données
         $providers = Provider::all();
 
-        // Ila lqina les providers, n-bdaw n-zidu lihom khidamat
         foreach ($providers as $provider) {
             $services = [
                 [

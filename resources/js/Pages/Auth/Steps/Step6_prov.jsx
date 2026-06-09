@@ -1,5 +1,5 @@
 import Map from "../../../Components/Map";
-
+import { MapPin } from "lucide-react";
 export default function Step6({
     data,
     setData,
@@ -11,7 +11,7 @@ export default function Step6({
     return (
         <div>
             <p className="text-center small text-muted mb-2">
-                📍 Cliquez ou utilisez votre position
+                <MapPin size={18} /> Cliquez ou utilisez votre position
             </p>
 
             <Map

@@ -11,7 +11,6 @@ export default function Step1({
 }) {
     return (
         <div className="animate__animated animate__fadeIn">
-            {/* الاسم */}
             <div className="field-group">
                 <div className="input-box">
                     <input
@@ -69,7 +68,6 @@ export default function Step1({
                 {getError("tel")}
             </div>
 
-            {/* الإيميل */}
             <div className="field-group">
                 <div className="input-box">
                     <input
@@ -98,7 +96,6 @@ export default function Step1({
                 {getError("email")}
             </div>
 
-            {/* المدينة */}
             <div className="field-group">
                 <div className="input-box">
                     <select

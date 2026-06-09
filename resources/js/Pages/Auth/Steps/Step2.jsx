@@ -10,7 +10,6 @@ export default function Step2({
 }) {
     return (
         <div className="animate__animated animate__fadeIn">
-            {/* كلمة المرور */}
             <div className="field-group">
                 <div className="input-box">
                     <input
@@ -41,7 +40,6 @@ export default function Step2({
                 {getError("password")}
             </div>
 
-            {/* تأكيد كلمة المرور */}
             <div className="field-group">
                 <div className="input-box">
                     <input
