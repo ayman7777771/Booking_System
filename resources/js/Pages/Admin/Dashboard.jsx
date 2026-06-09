@@ -5,13 +5,11 @@ import { Users, Wrench, Briefcase, Calendar } from 'lucide-react';
 export default function Dashboard({ auth, stats }) {
     return (
         <AdminLayout auth={auth} title="Admin Dashboard">
-            {/* Titre Dynamic */}
             <div style={{ marginBottom: '25px' }}>
                 <h2 style={{ margin: 0, fontSize: '24px', fontWeight: '700' }}>Tableau de Bord Global</h2>
                 <p style={{ margin: '5px 0 0 0', color: '#64748b', fontSize: '14px' }}>Mraḥba bik a khoya Amine. Hna iḥṣāʾiyāt l-khedma kamla.</p>
             </div>
 
-            {/* Grid dynamicment fih ga3 les stats d l-base de données */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
                 
                 <div style={cardStyle('#3b82f6')}>
@@ -51,7 +49,6 @@ export default function Dashboard({ auth, stats }) {
     );
 }
 
-// Quick Styles dynamic d les cards bach i-bdlo s-style m3a dynamic structure
 const cardStyle = (color) => ({
     border: '1px solid rgba(0,0,0,0.05)',
     borderRadius: '16px',

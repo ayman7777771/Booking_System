@@ -39,7 +39,7 @@ export default function ClientSidebar({ isOpen = true, onClose }) {
         { label: 'Profil', href: '/profile', icon: Settings },
     ] : [
         { label: 'Dashboard', href: '/dashboard', icon: Grid2X2 },
-        { label: 'Mes reservations', href: '/bookings', icon: CalendarDays },
+        { label: 'Mes demandes', href: '/mes-demandes', icon: CalendarDays },
         { label: 'Mon profil', href: '/profile', icon: User },
         { label: 'Messages', href: '/messages', icon: Mail, badge: true },
         { label: 'Parametres', href: '/profile', icon: Settings },

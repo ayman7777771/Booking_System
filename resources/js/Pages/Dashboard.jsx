@@ -81,9 +81,8 @@ export default function Dashboard({ auth, providers = [], villes = [], categorie
                         </div>
 
                         <div className="col-12 col-lg-auto">
-                            <button type="submit" className="btn booking-filter-btn w-100">
-                                <Search size={16} aria-hidden="true" />
-                                <span>Filtrer</span>
+                           <button className="btn btn-primary rounded-circle p-2 d-flex align-items-center justify-content-center">
+                            <Search size={16} />
                             </button>
                         </div>
                     </form>

@@ -75,6 +75,14 @@ class MessageController extends Controller
             return false;
         }
 
+        if ($sender->role === 'admin') {
+            return in_array($receiver->role, ['client', 'provider'], true) && $sender->statut && $receiver->statut;
+        }
+
+        if ($receiver->role === 'admin') {
+            return in_array($sender->role, ['client', 'provider'], true) && $sender->statut && $receiver->statut;
+        }
+
         return in_array($sender->role, ['client', 'provider'], true)
             && in_array($receiver->role, ['client', 'provider'], true)
             && $sender->role !== $receiver->role
@@ -84,6 +92,15 @@ class MessageController extends Controller
 
     private function contactsFor(User $currentUser): Collection
     {
+        if ($currentUser->role === 'admin') {
+            return User::query()
+                ->select(['id', 'name', 'email', 'photoProfile', 'role'])
+                ->whereIn('role', ['client', 'provider'])
+                ->where('statut', true)
+                ->orderBy('name')
+                ->get();
+        }
+
         $targetRole = $currentUser->role === 'provider' ? 'client' : 'provider';
 
         return User::query()
@@ -102,7 +119,7 @@ class MessageController extends Controller
                 $query->where('sender_id', $currentUser->id)
                     ->orWhere('receiver_id', $currentUser->id);
             })
-            ->groupBy(DB::raw("CASE WHEN sender_id = {$currentUser->id} THEN receiver_id ELSE sender_id END"));
+            ->groupByRaw('CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END', [$currentUser->id]);
 
         return Message::query()
             ->with(['sender:id,name,email,photoProfile,role', 'receiver:id,name,email,photoProfile,role'])

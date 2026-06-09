@@ -35,12 +35,12 @@ export default function Navbar({
         : null;
 
     return (
-        <nav className="navbar navbar-expand-lg app-navbar border-bottom px-4 py-2 sticky-top shadow-sm">
-            <div className="container-fluid p-0">
+        <nav className="navbar app-navbar border-bottom px-3 px-md-4 py-2 sticky-top shadow-sm">
+            <div className="container-fluid p-0 flex-nowrap gap-2">
 
                 {canToggleSidebar && (
                     <button
-                        className={`provider-sidebar-toggle ${isSidebarOpen ? 'is-open' : ''} me-3`}
+                        className={`provider-sidebar-toggle ${isSidebarOpen ? 'is-open' : ''}`}
                         type="button"
                         onClick={onToggleSidebar}
                         aria-label="Toggle sidebar"
@@ -50,24 +50,15 @@ export default function Navbar({
                 )}
 
                 <Link
-                    className="navbar-brand d-flex align-items-center gap-2 fw-bold text-info"
+                    className="navbar-brand d-flex align-items-center gap-2 fw-bold text-info me-auto"
                     href={authUser ? dashboardHref : '/'}
                 >
                     <ApplicationLogo className="mx-1" />
                     <span>Booking System</span>
                 </Link>
 
-                <button
-                    className="navbar-toggler border-0 text-secondary"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarContent"
-                >
-                    <Menu size={20} />
-                </button>
-
-                <div className="collapse navbar-collapse" id="navbarContent">
-                    <ul className="navbar-nav ms-auto align-items-lg-center gap-3">
+                <div className="navbar-actions">
+                    <ul className="navbar-nav flex-row align-items-center gap-2 gap-sm-3">
 
                         <li className="nav-item">
                             <ThemeToggle />
@@ -85,8 +76,9 @@ export default function Navbar({
                         )}
 
                         {authUser && (
-                            <div
-                                className="vr d-none d-lg-block bg-secondary my-2"
+                            <li
+                                aria-hidden="true"
+                                className="navbar-divider d-none d-md-block"
                                 style={{ height: '24px' }}
                             />
                         )}

@@ -28,7 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/bookings', [ReservationController::class, 'index'])->name('reservations.index');
+    Route::get('/mes-demandes', [ReservationController::class, 'index'])->name('reservations.index');
+    Route::redirect('/bookings', '/mes-demandes');
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
 
     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');

@@ -8,6 +8,7 @@ use App\Models\Provider\Provider;
 use App\Models\Provider\Service;
 use App\Models\User;
 use Carbon\Carbon;
+use Inertia\Testing\AssertableInertia as Assert;
 
 it('stores a reservation request for an available provider hour', function () {
     $reservationDate = Carbon::parse('next monday')->toDateString();
@@ -111,4 +112,38 @@ it('lets the owning provider accept a reservation', function () {
         'statut' => 'acceptee',
         'estEngage' => true,
     ]);
+});
+
+it('shows client reservation requests with their status', function () {
+    $category = Categorie::create(['name' => 'Cleaning']);
+    $providerUser = User::factory()->create(['role' => 'provider']);
+    $provider = Provider::factory()
+        ->for($providerUser)
+        ->for($category, 'categorie')
+        ->create();
+    $service = Service::factory()->for($provider)->create(['name' => 'Nettoyage salon']);
+
+    $clientUser = User::factory()->create(['role' => 'client']);
+    $client = Client::factory()->for($clientUser)->create();
+
+    Reservation::create([
+        'client_id' => $client->id,
+        'service_id' => $service->id,
+        'date' => '2026-07-01',
+        'heure' => '10:00',
+        'duration' => 60,
+        'statut' => 'en_attente',
+        'estEngage' => false,
+    ]);
+
+    $this->actingAs($clientUser)
+        ->get(route('reservations.index'))
+        ->assertSuccessful()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('MesDemandes')
+            ->where('mode', 'client')
+            ->where('reservations.0.service', 'Nettoyage salon')
+            ->where('reservations.0.statut', 'en_attente')
+            ->where('reservations.0.prestataire', $providerUser->name)
+        );
 });
