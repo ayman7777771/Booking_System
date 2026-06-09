@@ -1,7 +1,6 @@
 import React from 'react';
 
 export default function Navbar({ user, toggleDarkMode, isDarkMode, toggleSidebar }) {
-    // L-istayl dyal l-navbar (Glassmorphism)
     const navbarStyle = {
         background: 'var(--glass-bg)',
         backdropFilter: 'blur(10px)',
@@ -19,7 +18,6 @@ export default function Navbar({ user, toggleDarkMode, isDarkMode, toggleSidebar
 
     return (
         <nav style={navbarStyle} className="navbar-container">
-            {/* 1. L-Logo (Left) */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ width: '40px', height: '40px', background: 'var(--brand-gradient)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '20px' }}>
                     B
@@ -29,7 +27,6 @@ export default function Navbar({ user, toggleDarkMode, isDarkMode, toggleSidebar
                 </span>
             </div>
 
-            {/* 2. Controls & Profile (Right) */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 {/* Dark Mode Toggle */}
                 <button 
@@ -49,7 +46,6 @@ export default function Navbar({ user, toggleDarkMode, isDarkMode, toggleSidebar
                     <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)' }}>▼</span>
                 </div>
 
-                {/* Menu Burger Icon (kima f s-sora) */}
                 <button 
                     onClick={toggleSidebar}
                     style={{ 

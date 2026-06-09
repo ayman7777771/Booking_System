@@ -8,6 +8,7 @@ import "../../css/Welcome.css";
 export default function Welcome({ auth, flash, query }) {
     const [searchTerm, setSearchTerm] = useState(query || "");
 
+
     const handleSearch = (e) => {
         e.preventDefault();
         if (!searchTerm.trim()) return;

@@ -56,6 +56,7 @@ export default function Profile({ provider }) {
     };
 
     const confirmReservation = (reservation) => {
+        console.log("Reservation:", reservation);
         router.post(route("reservations.store"), reservation, {
             preserveScroll: true,
             onSuccess: () => {

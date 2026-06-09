@@ -16,140 +16,101 @@ use Illuminate\Validation\ValidationException;
 class ReservationController extends Controller
 {
     private const DAY_NAMES = [
-        'Dim',
-        'Lun',
-        'Mar',
-        'Mer',
-        'Jeu',
-        'Ven',
-        'Sam',
+        'Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam',
     ];
 
     public function index()
     {
         try {
-        $user = Auth::user();
+            $user = Auth::user();
+            if ($user?->provider) {
 
-        // 1. ILA KAN USER "PROVIDER"
-        if ($user && $user->provider) {
-            // S-iyfet l-provider l-page dyalu b les réservations dyalu direct
-            $providerReservations = \App\Models\Client\Reservation::with(['client.user', 'service'])
-                ->whereHas('service', function($query) use ($user) {
-                    $query->where('provider_id', $user->provider->id);
-                })
+                $providerReservations = Reservation::with(['client.user', 'service'])
+                    ->whereHas('service', function ($query) use ($user) {
+                        $query->where('provider_id', $user->provider->id);
+                    })
+                    ->latest()
+                    ->get();
+                return Inertia::render('Provider/DashboardReservations', [
+                    'reservations' => $providerReservations
+                ]);
+            }
+
+            $reservations = Reservation::with(['service.provider.utilisateur'])
+                ->where('client_id', $user->id)
                 ->latest()
                 ->get();
 
-            return Inertia::render('Provider/DashboardReservations', [
-                'reservations' => $providerReservations
+            return Inertia::render('MyReservations', [
+                'reservations' => $reservations
             ]);
+
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with('error', 'Something went wrong.');
         }
-
-        // 2. ILA KAN USER "CLIENT"
-        // Hna khdemna b l-code dyalk walakin zdna t-akkadna mn l-columns
-        $reservations = Reservation::with(['service.provider.utilisateur']) 
-            ->where('client_id', Auth::id())
-            ->get();
-
-        return Inertia::render('Client/MyReservations', [
-            'reservations' => $reservations
-        ]);
-
-    } catch (\Exception $e) {
-        // Hād l-blasa hya li ghadi t-mna3 500 error u t-biyen lik r-risala d l-mouchkil s-afiya f l-wjeh!
-        dd("L-Mouchkil jayi mn had l-stire: " . $e->getMessage());
-    }
-        $reservations = Reservation::with('client', 'service')->get();
-
-        return response()->json($reservations);
     }
 
-    public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'service_id' => 'required|exists:services,id',
-            'date_reservation' => 'required|date|after:today',
+public function store(Request $request): RedirectResponse
+{
+    $data = $request->validate([
+        'service_id' => ['required', 'integer', 'exists:services,id'],
+        'date' => ['required', 'date', 'after_or_equal:today'],
+        'heure' => ['required', 'date_format:H:i'],
+    ]);
+
+    $client = Client::firstOrCreate(
+        ['user_id' => $request->user()->id],
+        ['Avertissement' => null],
+    );
+
+    $service = Service::with('provider.plannings')->findOrFail($data['service_id']);
+
+    $day = self::DAY_NAMES[Carbon::parse($data['date'])->dayOfWeek];
+
+    $planning = $service->provider->plannings->firstWhere('day', $day);
+
+    if (!$planning || !in_array($data['heure'], $planning->time ?? [], true)) {
+        throw ValidationException::withMessages([
+            'heure' => 'This hour is not available.',
         ]);
-
-        // 2. Create Reservation
-        Reservation::create([
-            'client_id' => Auth::id(),
-            'service_id' => $request->service_id,
-            'date_reservation' => $request->date_reservation,
-            'statut' => 'en_attente',
-        ]);
-
-        return back()->with('success', 'Réservation dert b-najaḥ!');
-        $data = $request->validate([
-            'service_id' => ['required', 'integer', 'exists:services,id'],
-            'date' => ['required', 'date', 'after_or_equal:today'],
-            'heure' => ['required', 'date_format:H:i'],
-        ]);
-
-        $client = Client::firstOrCreate(
-            ['user_id' => $request->user()->id],
-            ['Avertissement' => null],
-        );
-
-        $service = Service::with('provider.plannings')->findOrFail($data['service_id']);
-        $day = self::DAY_NAMES[Carbon::parse($data['date'])->dayOfWeek];
-        $planning = $service->provider->plannings->firstWhere('day', $day);
-
-        if (! $planning || ! in_array($data['heure'], $planning->time ?? [], true)) {
-            throw ValidationException::withMessages([
-                'heure' => 'This hour is not available.',
-            ]);
-        }
-
-        if (Reservation::query()
-            ->where('service_id', $service->id)
-            ->where('date', $data['date'])
-            ->where('heure', $data['heure'])
-            ->whereIn('statut', ['en_attente', 'acceptee'])
-            ->exists()) {
-            throw ValidationException::withMessages([
-                'heure' => 'This hour is already reserved.',
-            ]);
-        }
-
-        Reservation::create([
-            'service_id' => $service->id,
-            'date' => $data['date'],
-            'heure' => $data['heure'],
-            'client_id' => $client->id,
-            'duration' => $service->duration,
-            'statut' => 'en_attente',
-            'estEngage' => false,
-        ]);
-
-        return back()->with('success', 'Reservation request sent.');
     }
-    
+
+    Reservation::create([
+        'service_id' => $service->id,
+        'date' => $data['date'],
+        'heure' => $data['heure'],
+        'client_id' => $client->id,
+        'duration' => $service->duration,
+        'statut' => 'en_attente',
+        'estEngage' => false,
+    ]);
+
+    return back()->with('success', 'Reservation request sent.');
+}
 
     public function show(Reservation $reservation)
     {
-        return response()->json($reservation->load('client', 'service'));
+        $this->authorizeAccess($reservation);
+
+        return Inertia::render('Client/ReservationShow', [
+            'reservation' => $reservation->load('client', 'service')
+        ]);
     }
 
-    public function update(Request $request, Reservation $reservation)
+    public function update(Request $request, Reservation $reservation): RedirectResponse
     {
-        $reservation->update($request->validated());
+        $this->authorizeAccess($reservation);
 
-        return response()->json($reservation);
-    }
+        $data = $request->validate([
+            'statut' => 'sometimes|string',
+            'estEngage' => 'sometimes|boolean',
+        ]);
 
-    public function destroy(Reservation $reservation)
-    {
-        $reservation->delete();
+        $reservation->update($data);
 
-        return response()->json(['message' => 'Reservation deleted']);
-    }
-
-    public function cancel(Reservation $reservation)
-    {
-        $reservation->update(['statut' => 'cancelled']);
-
-        return response()->json($reservation);
+        return back()->with('success', 'Reservation updated.');
     }
 
     public function accept(Request $request, Reservation $reservation): RedirectResponse
@@ -180,7 +141,21 @@ class ReservationController extends Controller
     {
         $provider = $request->user()?->provider;
 
-        abort_if(! $provider, 403);
-        abort_if($reservation->service()->where('provider_id', $provider->id)->doesntExist(), 403);
+        abort_if(!$provider, 403);
+
+        abort_if(
+            !$reservation->service || $reservation->service->provider_id !== $provider->id,
+            403
+        );
+    }
+
+    private function authorizeAccess(Reservation $reservation): void
+    {
+        $user = Auth::user();
+
+        abort_if(
+            !$user || ($reservation->client_id !== $user->id && !$user->provider),
+            403
+        );
     }
 }

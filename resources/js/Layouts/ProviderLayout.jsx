@@ -11,9 +11,10 @@ export default function ProviderLayout({ header, children, footer }) {
     return (
         <div className="provider-layout">
             <Navbar
-                canToggleSidebar={shouldShowProviderSidebar}
-                onToggleSidebar={() => setIsSidebarOpen((isOpen) => !isOpen)}
-            />
+    canToggleSidebar={shouldShowProviderSidebar}
+    onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
+    isSidebarOpen={isSidebarOpen}
+/>
             <div className="provider-layout-body d-flex align-items-stretch">
                 {shouldShowProviderSidebar && <Sidebar isOpen={isSidebarOpen} />}
                 <div className="provider-main flex-grow-1">
